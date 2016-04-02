@@ -3,14 +3,17 @@ package com.vijaysy.boomerang.models;
 import com.vijaysy.boomerang.enums.HttpMethod;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
  * Created by vijay.yala on 01/04/16.
  */
 @Entity
-@Table(name="retry_item")
-public class RetryItem {
+@Table(name="retry_item",indexes ={
+        @Index(columnList = "message_id", name = "message_id")
+})
+public class RetryItem implements Serializable{
 
     public RetryItem(){}
 
@@ -20,7 +23,7 @@ public class RetryItem {
         this.httpMethod=httpMethod;
         this.httpUri=httpUri;
         this.nextRetry=nextRetry;
-        setRetryPattern(Arrays.toString(retryPattern).replaceAll("\\[|\\]||\\s", ""));
+        setRetryPattern(Arrays.toString(retryPattern).replaceAll("\\[|\\]||\\s", "").replace(" ",""));
         setMaxRetry(retryPattern.length);
         this.fHttpMethod=fHttpMethod;
         this.fHttpUri=fHttpUri;
@@ -29,7 +32,7 @@ public class RetryItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id",unique = true)
     private Integer id;
 
     @Column(name = "message_id",unique = true)
@@ -64,6 +67,10 @@ public class RetryItem {
 
     public Integer getId() {
         return id;
+    }
+
+    public String getMessageId() {
+        return messageId;
     }
 
     public HttpMethod getfHttpMethod() {
@@ -134,4 +141,7 @@ public class RetryItem {
         this.id = id;
     }
 
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
 }

@@ -7,7 +7,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
 /**
- * Created by vijay.yala on 02/04/16.
+ * Created by vijaysy on 02/04/16.
  */
 public class SubListenerThread implements Runnable {
 

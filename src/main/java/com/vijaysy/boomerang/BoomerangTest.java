@@ -4,7 +4,7 @@ import com.vijaysy.boomerang.enums.HttpMethod;
 import com.vijaysy.boomerang.models.RetryItem;
 
 /**
- * Created by vijay.yala on 02/04/16.
+ * Created by vijaysy on 02/04/16.
  */
 public class BoomerangTest {
     public static void main(String args[])throws Exception{

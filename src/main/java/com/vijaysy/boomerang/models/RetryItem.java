@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 /**
- * Created by vijay.yala on 01/04/16.
+ * Created by vijaysy on 01/04/16.
  */
 @Entity
 @Table(name="retry_item",indexes ={

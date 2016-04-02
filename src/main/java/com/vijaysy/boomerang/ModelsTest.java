@@ -8,7 +8,7 @@ import org.hibernate.Session;
 import java.util.List;
 
 /**
- * Created by vijay.yala on 02/04/16.
+ * Created by vijaysy on 02/04/16.
  */
 public class ModelsTest {
     public static void main(String[] args){

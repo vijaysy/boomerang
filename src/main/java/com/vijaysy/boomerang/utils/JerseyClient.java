@@ -12,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- * Created by vijay.yala on 02/04/16.
+ * Created by vijaysy on 02/04/16.
  */
 public class JerseyClient {
     private Client client;

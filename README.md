@@ -4,7 +4,7 @@
    Every time you restart redis have to set notify-keyspace-events
    Command: redis-cli config set notify-keyspace-events KEA
    
-2. retry_item table
+2. retry_item table 
    +---------------+--------------+------+-----+---------+----------------+
    | Field         | Type         | Null | Key | Default | Extra          |
    +---------------+--------------+------+-----+---------+----------------+

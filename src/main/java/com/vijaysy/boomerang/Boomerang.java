@@ -15,7 +15,7 @@ import redis.clients.jedis.JedisPoolConfig;
 import java.util.Objects;
 
 /**
- * Created by vijay.yala on 01/04/16.
+ * Created by vijaysy on 01/04/16.
  */
 public class Boomerang {
 

@@ -1,7 +1,7 @@
 package com.vijaysy.boomerang.enums;
 
 /**
- * Created by vijay.yala on 01/04/16.
+ * Created by vijaysy on 01/04/16.
  */
 public enum  HttpMethod {
     POST ("POST"), PUT("PUT") , GET("GET");

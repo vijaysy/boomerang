@@ -11,7 +11,7 @@ import java.io.File;
 import java.util.Objects;
 
 /**
- * Created by vijay.yala on 02/04/16.
+ * Created by vijaysy on 02/04/16.
  */
 public class HibernateUtil {
     private static SessionFactory sessionFactory;

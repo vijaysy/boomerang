@@ -36,7 +36,7 @@ public class Boomerang {
         String nextRetry = retryItem.getRetryPattern()[retryItem.getNextRetry()];
         retryItem.setNextRetry(retryItem.getNextRetry()+1);
         Integer s = Integer.valueOf(nextRetry);
-        jedis.expire("RT"+retryItem.getMessageId(),s*60);
+        jedis.expire("RT"+retryItem.getMessageId(),s*30);
         Session session = null;
         try {
             session = HibernateUtil.getSessionWithTransaction();

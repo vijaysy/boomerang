@@ -17,8 +17,8 @@ public class ModelsTest {
     public static SessionFactory sessionFactory= getSessionFactory();
     public static void main(String[] args){
         Integer[] integers = new Integer[]{1,2,3,};
-        create(new RetryItem("Hi1", HttpMethod.GET,"URL1",0,integers,"fURL1",HttpMethod.POST));
-        create(new RetryItem("Hi2", HttpMethod.PUT,"URL2",0,integers,"fURL2",HttpMethod.GET));
+        create(new RetryItem("m1","Hi1", HttpMethod.GET,"URL1",0,integers,"fURL1",HttpMethod.POST));
+        create(new RetryItem("m2","Hi2", HttpMethod.PUT,"URL2",0,integers,"fURL2",HttpMethod.GET));
 
         List<RetryItem> retryItemList = read();
         for (RetryItem retryItem1: retryItemList)

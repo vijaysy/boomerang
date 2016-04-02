@@ -14,7 +14,8 @@ public class RetryItem {
 
     public RetryItem(){}
 
-    public RetryItem(String message , HttpMethod httpMethod, String httpUri, Integer nextRetry, Integer[] retryPattern,String fHttpUri,HttpMethod fHttpMethod){
+    public RetryItem(String messageId, String message , HttpMethod httpMethod, String httpUri, Integer nextRetry, Integer[] retryPattern,String fHttpUri,HttpMethod fHttpMethod){
+        this.messageId=messageId;
         this.message=message;
         this.httpMethod=httpMethod;
         this.httpUri=httpUri;
@@ -30,6 +31,9 @@ public class RetryItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
+
+    @Column(name = "message_id",unique = true)
+    private String messageId;
 
     @Column(name = "mesasge")
     private String message;

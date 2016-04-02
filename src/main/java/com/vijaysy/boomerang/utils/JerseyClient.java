@@ -22,8 +22,9 @@ public class JerseyClient {
     public JerseyClient(RetryItem retryItem){
         this.retryItem=retryItem;
         this.client= ClientBuilder.newClient();
-
     }
+
+    //TODO: need to check overload in creation of WebTarget and Client
 
     public boolean execute(){
         WebTarget webTarget = client.target(retryItem.getHttpUri());

@@ -15,6 +15,8 @@ import java.util.Arrays;
 })
 public class RetryItem implements Serializable{
 
+    //TODO: need to add headers,timestamps
+
     public RetryItem(){}
 
     public RetryItem(String messageId, String message , HttpMethod httpMethod, String httpUri, Integer nextRetry, Integer[] retryPattern,String fHttpUri,HttpMethod fHttpMethod){

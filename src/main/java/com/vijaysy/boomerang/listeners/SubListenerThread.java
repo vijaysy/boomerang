@@ -18,6 +18,7 @@ public class SubListenerThread implements Runnable {
     private volatile Boolean flag;
 
     public SubListenerThread(){
+        //TODO: move config to yml
         this.host="localhost";
         this.port="26379";
         this.channel="__key*__:RT*";
@@ -47,6 +48,7 @@ public class SubListenerThread implements Runnable {
 
                 @Override
                 public void onPMessage(String pattern, String channel, String message) {
+                    //TODO: Use logs inplace of System.out.print
                     System.out.print("[Pattern:" + pattern + "]");
                     System.out.print("[Channel: " + channel + "]");
                     System.out.println("[Message: " + message + "]");
@@ -54,7 +56,9 @@ public class SubListenerThread implements Runnable {
                     System.out.printf("Got expired Call\n");
                     String messageId=channel.substring(17);
                     RetryItem retryItem = Boomerang.readRetryItem(messageId);
+                    //TODO: check for null retryItem
                     boolean f = (retryItem.getNextRetry()!=retryItem.getMaxRetry())?new JerseyClient(retryItem).execute():new JerseyClient(retryItem).executeFallBack();
+                    //TODO: handle failed executeFallBack method
                 }
             }, channel);
         }

@@ -21,7 +21,7 @@ public class Boomerang {
 
     public static boolean reappear (RetryItem r) throws InvalidRetryItem,DBException,RetryCountException{
 
-        if(Objects.isNull(r))
+        if(isValidRetryItem(r))
             throw new InvalidRetryItem("RetryItem is null");
 
         RetryItem dBRetryItem=readRetryItem(r.getMessageId());
@@ -65,5 +65,10 @@ public class Boomerang {
         RetryItem dBRetryItem=(RetryItem)criteria.uniqueResult();
         HibernateUtil.closeSession(session);
         return dBRetryItem;
+    }
+
+    public static boolean isValidRetryItem(RetryItem retryItem){
+        //TODO: need to validate maxRetry for -ve values and null attributes
+        return Objects.isNull(retryItem);
     }
 }

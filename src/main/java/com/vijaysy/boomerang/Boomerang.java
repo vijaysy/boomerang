@@ -5,6 +5,7 @@ import com.vijaysy.boomerang.exception.InvalidRetryItem;
 import com.vijaysy.boomerang.exception.RetryCountException;
 import com.vijaysy.boomerang.models.RetryItem;
 import com.vijaysy.boomerang.utils.HibernateUtil;
+import com.vijaysy.boomerang.utils.RetryItemBuilder;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -21,6 +22,10 @@ import java.util.Optional;
 public final class Boomerang {
 
     private Boomerang(){}
+
+    public static boolean reapper(RetryItemBuilder retryItemBuilder)throws InvalidRetryItem,DBException,RetryCountException{
+        return reappear(retryItemBuilder.getRetryItem());
+    }
 
     public static boolean reappear (RetryItem rcvRetryItem) throws InvalidRetryItem,DBException,RetryCountException{
         if(isValidRetryItem(rcvRetryItem))

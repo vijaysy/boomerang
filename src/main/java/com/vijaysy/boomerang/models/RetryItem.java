@@ -55,11 +55,11 @@ public class RetryItem implements Serializable{
     @Column(name = "http_uri")
     private String httpUri;
 
-    @Column(name = "next_retry")
-    private Integer nextRetry;
-
     @Column(name = "retry_pattern")
     private String retryPattern;
+
+    @Column(name = "next_retry")
+    private Integer nextRetry;
 
     @Column(name = "max_retry")
     private Integer maxRetry;

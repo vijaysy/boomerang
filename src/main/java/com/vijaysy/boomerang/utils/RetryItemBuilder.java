@@ -6,7 +6,7 @@ import com.vijaysy.boomerang.models.RetryItem;
 import java.util.Arrays;
 
 /**
- * Created by vijay.yala on 04/04/16.
+ * Created by vijaysy on 04/04/16.
  */
 public final class RetryItemBuilder {
     private RetryItem retryItem;
@@ -42,6 +42,7 @@ public final class RetryItemBuilder {
         return this;
     }
 
+    // TODO: 04/04/16  not required, should be zero by default
     public RetryItemBuilder withNextRetry(Integer nextRetry){
         this.retryItem.setNextRetry(nextRetry);
         return this;

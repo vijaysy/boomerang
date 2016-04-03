@@ -13,25 +13,25 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Created by vijaysy on 01/04/16.
  */
-public class Boomerang {
+public final class Boomerang {
 
-    public static boolean reappear (RetryItem r) throws InvalidRetryItem,DBException,RetryCountException{
+    private Boomerang(){}
 
-        if(isValidRetryItem(r))
+    public static boolean reappear (RetryItem rcvRetryItem) throws InvalidRetryItem,DBException,RetryCountException{
+        if(isValidRetryItem(rcvRetryItem))
             throw new InvalidRetryItem("RetryItem is null");
-
-        RetryItem dBRetryItem=readRetryItem(r.getMessageId());
-        RetryItem retryItem = Objects.nonNull(dBRetryItem)? dBRetryItem: r ;
-
+        RetryItem dBRetryItem=readRetryItem(rcvRetryItem.getMessageId());
+        RetryItem retryItem = Objects.nonNull(dBRetryItem)? dBRetryItem: rcvRetryItem ;
         if(retryItem.getMaxRetry()<retryItem.getNextRetry()+1)
             throw new RetryCountException("Retry count crossed the max retry count");
-
         JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost");
         Jedis jedis = pool.getResource();
+        // // TODO: 03/04/16 move "RT" to yml
         jedis.set("RT"+retryItem.getMessageId(),"dummyValue");
         String nextRetry = retryItem.getRetryPattern()[retryItem.getNextRetry()];
         retryItem.setNextRetry(retryItem.getNextRetry()+1);
@@ -54,8 +54,11 @@ public class Boomerang {
     }
 
 
-    public static RetryItem isFirstRetry(String messageId){
-        return readRetryItem(messageId);
+    public static Optional<RetryItem> isRetryExist(String messageId){
+        RetryItem retryItem = readRetryItem(messageId);
+        if (Objects.nonNull(retryItem))
+        return Optional.of(retryItem);
+        return Optional.empty();
     }
 
     public static RetryItem readRetryItem(String messageId){

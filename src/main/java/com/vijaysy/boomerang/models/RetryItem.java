@@ -1,21 +1,26 @@
 package com.vijaysy.boomerang.models;
 
+import com.sun.istack.internal.NotNull;
 import com.vijaysy.boomerang.enums.HttpMethod;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Created by vijaysy on 01/04/16.
  */
 @Entity
+@ToString
 @Table(name="retry_item",indexes ={
         @Index(columnList = "message_id", name = "message_id")
 })
 public class RetryItem implements Serializable{
 
     //TODO: need to add headers,timestamps
+    // TODO: 04/04/16  use primitive datatypes
 
     public RetryItem(){}
 
@@ -38,9 +43,10 @@ public class RetryItem implements Serializable{
     private Integer id;
 
     @Column(name = "message_id",unique = true)
+    @NotNull
     private String messageId;
 
-    @Column(name = "mesasge")
+    @Column(name = "message")
     private String message;
 
     @Column(name = "http_method")
@@ -145,5 +151,25 @@ public class RetryItem implements Serializable{
 
     public void setMessageId(String messageId) {
         this.messageId = messageId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (Objects.isNull(o)) return false;
+        if (!(o instanceof RetryItem)) return false;
+
+        RetryItem retryItem = (RetryItem) o;
+
+        if (!getMessageId().equals(retryItem.getMessageId())) return false;
+        return getMessage() != null ? getMessage().equals(retryItem.getMessage()) : retryItem.getMessage() == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getMessageId().hashCode();
+        result = 31 * result + (getMessage() != null ? getMessage().hashCode() : 0);
+        return result;
     }
 }

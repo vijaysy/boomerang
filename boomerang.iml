@@ -54,5 +54,6 @@
     <orderEntry type="library" name="Gradle: org.glassfish.jersey.bundles.repackaged:jersey-guava:2.19" level="project" />
     <orderEntry type="library" name="Gradle: org.glassfish.hk2:osgi-resource-locator:1.0.1" level="project" />
     <orderEntry type="library" name="Gradle: org.glassfish.hk2:hk2-utils:2.4.0-b25" level="project" />
+    <orderEntry type="library" name="Gradle: org.projectlombok:lombok:1.16.6" level="project" />
   </component>
 </module>

@@ -65,6 +65,7 @@ public class RetryItem implements Serializable{
     private Integer maxRetry;
 
     //Post max retry
+    // TODO: 04/04/16  do we really need fallback api ?? Can we hit retry api with some flag ??
 
     @Column(name = "f_http_uri")
     private String fHttpUri;

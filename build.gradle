@@ -17,6 +17,8 @@ dependencies {
             'redis.clients:jedis:2.7.2',
             'org.glassfish.jersey.core:jersey-client:2.19',
             'org.json:json:20151123',
-            'org.projectlombok:lombok:1.16.6'
+            'org.projectlombok:lombok:1.16.6',
+            'com.esotericsoftware.yamlbeans:yamlbeans:1.09'
+
 
 }

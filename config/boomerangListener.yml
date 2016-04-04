@@ -1,0 +1,10 @@
+
+ groupName: "testGroup"
+
+ threadConfigs:
+       - name: "Test1"
+         channel: "RT"
+         listenerCount: 5
+       - name: "Test2"
+         channel: "RT"
+         listenerCount: 6

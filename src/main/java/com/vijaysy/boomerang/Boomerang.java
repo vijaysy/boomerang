@@ -31,11 +31,10 @@ public final class Boomerang {
             throw new RetryCountException("Retry count crossed the max retry count");
         JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost");
         Jedis jedis = pool.getResource();
-        // // TODO: 03/04/16 move "RT" to yml
-        jedis.set("RT"+retryItem.getMessageId(),"dummyValue");
+        jedis.set(retryItem.getChannel()+"."+retryItem.getMessageId(),"dummyValue");
         String nextRetry = retryItem.getRetryPattern()[retryItem.getNextRetry()];
         retryItem.setNextRetry(retryItem.getNextRetry()+1);
-        jedis.expire("RT"+retryItem.getMessageId(),Integer.valueOf(nextRetry)*30);
+        jedis.expire(retryItem.getChannel()+"."+retryItem.getMessageId(),Integer.valueOf(nextRetry)*30);
         Session session = null;
         try {
             session = HibernateUtil.getSessionWithTransaction();
@@ -44,7 +43,7 @@ public final class Boomerang {
         }catch (Exception e){
             System.out.println("Exception while storing object "+e.toString());
             HibernateUtil.rollbackTransaction(session);
-            jedis.del("RT"+retryItem.getMessageId());
+            jedis.del(retryItem.getChannel()+"."+retryItem.getMessageId());
             throw new DBException("Error occurred while storing  RetryItem");
         }finally {
             HibernateUtil.closeSession(session);

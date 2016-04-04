@@ -54,7 +54,7 @@ public class SubListenerThread implements Runnable {
                     System.out.println("[Message: " + message + "]");
                     if(!message.equals("expired")) return;
                     System.out.printf("Got expired Call\n");
-                    String messageId=channel.substring(17);
+                    String messageId=channel.substring(channel.indexOf('.')+1);
                     RetryItem retryItem = Boomerang.readRetryItem(messageId);
                     //TODO: check for null retryItem
                     boolean f = (retryItem.getNextRetry()!=retryItem.getMaxRetry())?new JerseyClient(retryItem).execute():new JerseyClient(retryItem).executeFallBack();

@@ -24,7 +24,7 @@ public class RetryItem implements Serializable{
 
     public RetryItem(){}
 
-    public RetryItem(String messageId, String message , HttpMethod httpMethod, String httpUri, Integer nextRetry, Integer[] retryPattern,String fHttpUri,HttpMethod fHttpMethod){
+    public RetryItem(String messageId, String message , HttpMethod httpMethod, String httpUri, Integer nextRetry, Integer[] retryPattern,String fHttpUri,HttpMethod fHttpMethod, String channel){
         this.messageId=messageId;
         this.message=message;
         this.httpMethod=httpMethod;
@@ -34,6 +34,7 @@ public class RetryItem implements Serializable{
         setMaxRetry(retryPattern.length);
         this.fallbackHttpMethod =fHttpMethod;
         this.fallbackHttpUri =fHttpUri;
+        this.channel=channel;
 
     }
 
@@ -63,6 +64,10 @@ public class RetryItem implements Serializable{
 
     @Column(name = "max_retry")
     private Integer maxRetry;
+
+    @Column(name = "channel")
+    @NotNull
+    private String channel;
 
     //Post max retry
     // TODO: 04/04/16  do we really need fallback api ?? Can we hit retry api with some flag ??
@@ -114,11 +119,15 @@ public class RetryItem implements Serializable{
         return message;
     }
 
-    public void setFallBackHttpMethod(HttpMethod fHttpMethod) {
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setFallbackHttpMethod(HttpMethod fHttpMethod) {
         this.fallbackHttpMethod = fHttpMethod;
     }
 
-    public void setFallBackHttpUri(String fHttpUri) {
+    public void setFallbackHttpUri(String fHttpUri) {
         this.fallbackHttpUri = fHttpUri;
     }
 
@@ -153,6 +162,11 @@ public class RetryItem implements Serializable{
     public void setMessageId(String messageId) {
         this.messageId = messageId;
     }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
+
 
     @Override
     public boolean equals(Object o) {

@@ -49,12 +49,17 @@ public final class RetryItemBuilder {
     }
 
     public RetryItemBuilder withFallbackHttpMethod(HttpMethod httpMethod){
-        this.retryItem.setFallBackHttpMethod(httpMethod);
+        this.retryItem.setFallbackHttpMethod(httpMethod);
         return this;
     }
 
     public RetryItemBuilder withFallbackHttpUrl(String url){
-        this.retryItem.setFallBackHttpUri(url);
+        this.retryItem.setFallbackHttpUri(url);
+        return this;
+    }
+
+    public RetryItemBuilder withChannel(String channel){
+        this.retryItem.setChannel(channel);
         return this;
     }
 
@@ -63,7 +68,5 @@ public final class RetryItemBuilder {
     }
 
     // TODO: 04/04/16  addHeader() not addHeaders()
-    public RetryItem getRetryItem() {
-        return retryItem;
-    }
+
 }

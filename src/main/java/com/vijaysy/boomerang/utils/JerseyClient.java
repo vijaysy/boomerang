@@ -43,9 +43,9 @@ public class JerseyClient {
     }
 
     public boolean executeFallBack() {
-        WebTarget webTarget = client.target(retryItem.getfHttpUri());
+        WebTarget webTarget = client.target(retryItem.getFallbackHttpUri());
         System.out.printf("Execute FallBack : "+retryItem.getMessageId());
-        switch (retryItem.getfHttpMethod()){
+        switch (retryItem.getFallbackHttpMethod()){
             case POST:response=webTarget.request().post(Entity.entity(new JSONObject(retryItem.getMessage()), MediaType.APPLICATION_JSON_TYPE+ ";charset=UTF-8"));
                 break;
             case GET:response=webTarget.request().buildGet().invoke();

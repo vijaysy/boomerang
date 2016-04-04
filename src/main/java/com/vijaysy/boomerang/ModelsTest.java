@@ -18,7 +18,7 @@ public class ModelsTest {
 
         List<RetryItem> retryItemList = read();
         for (RetryItem retryItem1: retryItemList)
-            System.out.println(retryItem1.getfHttpMethod());
+            System.out.println(retryItem1.getFallbackHttpMethod());
 
     }
 

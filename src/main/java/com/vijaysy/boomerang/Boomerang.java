@@ -48,6 +48,8 @@ public final class Boomerang {
             throw new DBException("Error occurred while storing  RetryItem");
         }finally {
             HibernateUtil.closeSession(session);
+            jedis.close();
+
         }
         return true;
     }

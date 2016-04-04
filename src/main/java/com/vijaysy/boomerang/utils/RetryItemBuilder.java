@@ -49,12 +49,12 @@ public final class RetryItemBuilder {
     }
 
     public RetryItemBuilder withFallbackHttpMethod(HttpMethod httpMethod){
-        this.retryItem.setfHttpMethod(httpMethod);
+        this.retryItem.setFallBackHttpMethod(httpMethod);
         return this;
     }
 
     public RetryItemBuilder withFallbackHttpUrl(String url){
-        this.retryItem.setfHttpUri(url);
+        this.retryItem.setFallBackHttpUri(url);
         return this;
     }
 

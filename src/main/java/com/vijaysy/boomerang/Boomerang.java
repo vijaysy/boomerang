@@ -5,7 +5,6 @@ import com.vijaysy.boomerang.exception.InvalidRetryItem;
 import com.vijaysy.boomerang.exception.RetryCountException;
 import com.vijaysy.boomerang.models.RetryItem;
 import com.vijaysy.boomerang.utils.HibernateUtil;
-import com.vijaysy.boomerang.utils.RetryItemBuilder;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -23,10 +22,6 @@ public final class Boomerang {
 
     private Boomerang(){}
 
-    public static boolean reapper(RetryItemBuilder retryItemBuilder)throws InvalidRetryItem,DBException,RetryCountException{
-        return reappear(retryItemBuilder.getRetryItem());
-    }
-
     public static boolean reappear (RetryItem rcvRetryItem) throws InvalidRetryItem,DBException,RetryCountException{
         if(isValidRetryItem(rcvRetryItem))
             throw new InvalidRetryItem("RetryItem is null");
@@ -40,8 +35,7 @@ public final class Boomerang {
         jedis.set("RT"+retryItem.getMessageId(),"dummyValue");
         String nextRetry = retryItem.getRetryPattern()[retryItem.getNextRetry()];
         retryItem.setNextRetry(retryItem.getNextRetry()+1);
-        Integer s = Integer.valueOf(nextRetry);
-        jedis.expire("RT"+retryItem.getMessageId(),s*30);
+        jedis.expire("RT"+retryItem.getMessageId(),Integer.valueOf(nextRetry)*30);
         Session session = null;
         try {
             session = HibernateUtil.getSessionWithTransaction();

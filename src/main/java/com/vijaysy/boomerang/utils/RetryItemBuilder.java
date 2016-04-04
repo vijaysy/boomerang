@@ -58,6 +58,10 @@ public final class RetryItemBuilder {
         return this;
     }
 
+    public RetryItem build(){
+        return this.retryItem;
+    }
+
     // TODO: 04/04/16  addHeader() not addHeaders()
     public RetryItem getRetryItem() {
         return retryItem;

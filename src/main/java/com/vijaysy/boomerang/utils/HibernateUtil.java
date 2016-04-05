@@ -18,7 +18,6 @@ public class HibernateUtil {
 
     public static SessionFactory getSessionFactory() {
         if(Objects.isNull(sessionFactory)){
-            //TODO: make location of hibernate.cfg.xml to relative
             Configuration configuration = new Configuration().configure(new File("config/hibernate.cfg.xml"));
             configuration.addAnnotatedClass(RetryItem.class);
             StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());

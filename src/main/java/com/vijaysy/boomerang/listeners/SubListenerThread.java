@@ -3,12 +3,16 @@ package com.vijaysy.boomerang.listeners;
 import com.vijaysy.boomerang.Boomerang;
 import com.vijaysy.boomerang.models.RetryItem;
 import com.vijaysy.boomerang.utils.JerseyClient;
+import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
+
+import java.util.Objects;
 
 /**
  * Created by vijaysy on 02/04/16.
  */
+@Slf4j
 public class SubListenerThread implements Runnable {
 
     private String host;
@@ -47,15 +51,14 @@ public class SubListenerThread implements Runnable {
 
                 @Override
                 public void onPMessage(String pattern, String channel, String message) {
-                    //TODO: Use logs inplace of System.out.print
-                    System.out.print("[Pattern:" + pattern + "]");
-                    System.out.print("[Channel: " + channel + "]");
-                    System.out.println("[Message: " + message + "]");
+                    log.info("[Pattern:" + pattern + "]");
+                    log.info("[Channel: " + channel + "]");
+                    log.info("[Message: " + message + "]");
                     if(!message.equals("expired")) return;
-                    System.out.printf("Got expired Call\n");
+                    log.info("Got expired Call");
                     String messageId=channel.substring(channel.indexOf('.')+1);
                     RetryItem retryItem = Boomerang.readRetryItem(messageId);
-                    //TODO: check for null retryItem
+                    if(Objects.isNull(retryItem)) return;
                     boolean f = (retryItem.getNextRetry()!=retryItem.getMaxRetry())?new JerseyClient(retryItem).execute():new JerseyClient(retryItem).executeFallBack();
                     //TODO: handle failed executeFallBack method
                 }

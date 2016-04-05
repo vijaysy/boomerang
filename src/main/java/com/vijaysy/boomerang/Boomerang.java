@@ -22,11 +22,7 @@ public final class Boomerang {
 
     private Boomerang(){}
 
-    public static boolean reappear (RetryItem rcvRetryItem) throws InvalidRetryItem,DBException,RetryCountException{
-        if(isValidRetryItem(rcvRetryItem))
-            throw new InvalidRetryItem("RetryItem is null");
-        RetryItem dBRetryItem=readRetryItem(rcvRetryItem.getMessageId());
-        RetryItem retryItem = Objects.nonNull(dBRetryItem)? dBRetryItem: rcvRetryItem ;
+    public static boolean reappear (RetryItem retryItem) throws InvalidRetryItem,DBException,RetryCountException{
         if(retryItem.getMaxRetry()<retryItem.getNextRetry()+1)
             throw new RetryCountException("Retry count crossed the max retry count");
         JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost");
@@ -56,9 +52,7 @@ public final class Boomerang {
 
     public static Optional<RetryItem> isRetryExist(String messageId){
         RetryItem retryItem = readRetryItem(messageId);
-        if (Objects.nonNull(retryItem))
-        return Optional.of(retryItem);
-        return Optional.empty();
+        return Objects.nonNull(retryItem)?Optional.of(retryItem):Optional.<RetryItem>empty();
     }
 
     public static RetryItem readRetryItem(String messageId){

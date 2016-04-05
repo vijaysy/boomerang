@@ -14,7 +14,7 @@
                        .withMessage("Test Message")
                        .withHttpMethod(HttpMethod.POST)
                        .withHttpUrl("http://localhost:8080")
-                       ..withRetryPattern(new Integer[]{1, 2, 3,})
+                       .withRetryPattern(new Integer[]{1, 2, 3,})
                        .withNextRetry(0)
                        .withFallbackHttpMethod(HttpMethod.PUT)
                        .withFallbackHttpUrl("http://localhost:8080/fallback")

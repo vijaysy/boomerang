@@ -14,7 +14,7 @@
                        .withMessage("Test Message")
                        .withHttpMethod(HttpMethod.POST)
                        .withHttpUrl("http://localhost:8080")
-                       .withRetryPattern(integers)
+                       ..withRetryPattern(new Integer[]{1, 2, 3,})
                        .withNextRetry(0)
                        .withFallbackHttpMethod(HttpMethod.PUT)
                        .withFallbackHttpUrl("http://localhost:8080/fallback")
@@ -22,8 +22,7 @@
                        .build());
    ```
 ### Listener yml example
-
-    ```
+    
          groupName: "testGroup"
         
          threadConfigs:
@@ -39,7 +38,7 @@
                  port: 26379
                  db: 0
                  password: "foobared"
-    ```             
+                            
 
     
 1. Redis server should be running on your local machine

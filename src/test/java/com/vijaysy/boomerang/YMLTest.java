@@ -19,16 +19,11 @@ public class YMLTest {
         YamlReader reader = new YamlReader(new FileReader("config/boomerangListener.yml"));
         Object object = reader.read();
         Map map = (Map)object;
-        //System.out.printf(map.toString());
         ListenerConfig listenerConfig = new ListenerConfig();
-
         listenerConfig.setThreadConfigs((List<ThreadConfig>) map.get("threadConfigs"));
         listenerConfig.setGroupName((String)map.get("groupName"));
         listenerConfig.setRedisConfig((HashMap<String, String>) map.get("redisConfig"));
         log.info("Testing log");
         log.info(""+listenerConfig);
-        //System.out.printf(listenerConfig.toString());
-
-
     }
 }

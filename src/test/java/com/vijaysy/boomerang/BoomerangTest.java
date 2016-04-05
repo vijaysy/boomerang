@@ -11,22 +11,22 @@ import java.util.Optional;
  */
 public class BoomerangTest {
     public static void main(String args[]) throws Exception {
-        Integer[] integers = new Integer[]{1, 2, 3,};
-        Boomerang.reappear(new RetryItem("m11", "Hi12", HttpMethod.GET, "URL1", 0, integers, "fURL1", HttpMethod.POST, "RT"));
+        Integer[] integers = new Integer[]{1, 1, 1};
+        //Boomerang.reappear(new RetryItem("m11", "Hi12", HttpMethod.GET, "URL1", 0, integers, "fURL1", HttpMethod.POST, "RT"));
 
-        Optional<RetryItem> retryItem = Boomerang.isRetryExist("m33");
+        Optional<RetryItem> retryItem = Boomerang.isRetryExist("m44");
         if (retryItem.isPresent())
             Boomerang.reappear(retryItem.get());
         else
             Boomerang.reappear(RetryItemBuilder.create()
-                    .withMessageId("m33")
-                    .withMessage("Test Message")
+                    .withMessageId("m44")
+                    .withMessage("{\"input\":\"Hi12\"}")
                     .withHttpMethod(HttpMethod.POST)
-                    .withHttpUrl("http://localhost:8080")
+                    .withHttpUrl("http://localhost:8080/mock/post")
                     .withRetryPattern(integers)
                     .withNextRetry(0)
                     .withFallbackHttpMethod(HttpMethod.PUT)
-                    .withFallbackHttpUrl("http://localhost:8080/fallback")
+                    .withFallbackHttpUrl("http://localhost:8080/mock")
                     .withChannel("RT")
                     .build());
     }

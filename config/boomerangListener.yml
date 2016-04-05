@@ -4,7 +4,7 @@
  threadConfigs:
        - name: "Test1"
          channel: "RT"
-         listenerCount: 5
+         listenerCount: 1
        - name: "Test2"
          channel: "RT"
          listenerCount: 6

@@ -1,6 +1,5 @@
 package com.vijaysy.boomerang.models.Config;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -14,7 +13,6 @@ import java.util.Objects;
  */
 @ToString
 @Getter
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class ListenerConfig {
     private String groupName;
     private List<ThreadConfig> threadConfigs = new ArrayList<ThreadConfig>();

@@ -3,7 +3,6 @@ package com.vijaysy.boomerang.listeners;
 import com.vijaysy.boomerang.Boomerang;
 import com.vijaysy.boomerang.models.RetryItem;
 import com.vijaysy.boomerang.utils.JerseyClient;
-import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
@@ -12,7 +11,6 @@ import java.util.Objects;
 /**
  * Created by vijaysy on 02/04/16.
  */
-@Slf4j
 public class SubListenerThread implements Runnable {
 
     private String host;
@@ -41,7 +39,7 @@ public class SubListenerThread implements Runnable {
 
     @Override
     public void run() {
-        System.out.printf("Started\n");
+        //log.info("Listener Started");
         while (flag){
             jedis.psubscribe(new JedisPubSub() {
                 @Override
@@ -51,11 +49,11 @@ public class SubListenerThread implements Runnable {
 
                 @Override
                 public void onPMessage(String pattern, String channel, String message) {
-                    log.info("[Pattern:" + pattern + "]");
-                    log.info("[Channel: " + channel + "]");
-                    log.info("[Message: " + message + "]");
+//                    log.info("[Pattern:" + pattern + "]");
+//                    log.info("[Channel: " + channel + "]");
+//                    log.info("[Message: " + message + "]");
                     if(!message.equals("expired")) return;
-                    log.info("Got expired Call");
+                    //log.info("Got expired Call");
                     String messageId=channel.substring(channel.indexOf('.')+1);
                     RetryItem retryItem = Boomerang.readRetryItem(messageId);
                     if(Objects.isNull(retryItem)) return;

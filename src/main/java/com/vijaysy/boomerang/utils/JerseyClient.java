@@ -2,13 +2,11 @@ package com.vijaysy.boomerang.utils;
 
 
 import com.vijaysy.boomerang.models.RetryItem;
-import org.json.JSONObject;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -30,31 +28,23 @@ public class JerseyClient {
         WebTarget webTarget = client.target(retryItem.getHttpUri());
         System.out.printf("Execute: "+retryItem.getMessageId());
         switch (retryItem.getHttpMethod()){
-            case POST: webTarget.request().post(Entity.entity(new JSONObject(retryItem.getMessage()), MediaType.APPLICATION_JSON_TYPE+ ";charset=UTF-8"));
+            case POST: response=webTarget.request().buildPost(Entity.json(retryItem.getMessage())).invoke();
                 break;
-            case GET: webTarget.request().buildGet().invoke();
+            case GET: response=webTarget.request().buildGet().invoke();
                 break;
-            case PUT: webTarget.request().put(Entity.entity(new JSONObject(retryItem.getMessage()), MediaType.APPLICATION_JSON_TYPE+ ";charset=UTF-8"));
+            case PUT: response=webTarget.request().buildPut(Entity.json(retryItem.getMessage())).invoke();
                 break;
             default: return false;
         }
+        System.out.printf(response.toString());
       return true;
 
     }
 
-    public boolean executeFallBack() {
-        WebTarget webTarget = client.target(retryItem.getFallbackHttpUri());
-        System.out.printf("Execute FallBack : "+retryItem.getMessageId());
-        switch (retryItem.getFallbackHttpMethod()){
-            case POST:response=webTarget.request().post(Entity.entity(new JSONObject(retryItem.getMessage()), MediaType.APPLICATION_JSON_TYPE+ ";charset=UTF-8"));
-                break;
-            case GET:response=webTarget.request().buildGet().invoke();
-                break;
-            case PUT: response = webTarget.request().put(Entity.entity(new JSONObject(retryItem.getMessage()), MediaType.APPLICATION_JSON_TYPE+ ";charset=UTF-8"));
-                break;
-            default:return false;
-        }
-       return  (Response.Status.Family.familyOf(response.getStatus())== Response.Status.Family.SERVER_ERROR)?false:true;
+    public boolean executeFallBack(){
+        WebTarget webTarget = client.target(retryItem.getFallbackHttpUri()+"/"+retryItem.getMessageId()+"/fallback");
+        response=webTarget.request().buildPut(Entity.text("")).invoke();
+        return true;
     }
 
 

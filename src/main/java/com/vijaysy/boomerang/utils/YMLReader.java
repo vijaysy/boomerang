@@ -1,31 +1,32 @@
-package com.vijaysy.boomerang;
+package com.vijaysy.boomerang.utils;
 
 import com.esotericsoftware.yamlbeans.YamlReader;
 import com.vijaysy.boomerang.models.Config.ListenerConfig;
 import com.vijaysy.boomerang.models.Config.ThreadConfig;
 
+import javax.inject.Singleton;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Created by vijaysy on 04/04/16.
+ * Created by vijaysy on 05/04/16.
  */
-public class YMLTest {
-    public static void main(String [] args) throws Exception{
+@Singleton
+public class YMLReader {
+    private ListenerConfig listenerConfig;
+    public YMLReader() throws Exception {
         YamlReader reader = new YamlReader(new FileReader("config/boomerangListener.yml"));
         Object object = reader.read();
         Map map = (Map)object;
-        System.out.printf(map.toString());
-        ListenerConfig listenerConfig = new ListenerConfig();
-
+        listenerConfig = new ListenerConfig();
         listenerConfig.setThreadConfigs((List<ThreadConfig>) map.get("threadConfigs"));
         listenerConfig.setGroupName((String)map.get("groupName"));
         listenerConfig.setRedisConfig((HashMap<String, String>) map.get("redisConfig"));
+    }
 
-        System.out.printf(listenerConfig.toString());
-
-
+    public ListenerConfig getListenerConfig() {
+        return listenerConfig;
     }
 }

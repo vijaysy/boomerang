@@ -12,25 +12,24 @@ import redis.clients.jedis.JedisPubSub;
 public class SubListenerThread implements Runnable {
 
     private String host;
-    private String port;
+    private int port;
     private String channel;
     private Jedis jedis ;
     private volatile Boolean flag;
 
     public SubListenerThread(){
-        //TODO: move config to yml
         this.host="localhost";
-        this.port="26379";
+        this.port=26379;
         this.channel="__key*__:RT*";
         this.flag=true;
         jedis= new Jedis(host);
     }
 
 
-    public SubListenerThread(String host,String port,String channel){
+    public SubListenerThread(String host,int port,String channel){
         this.host=host;
         this.port=port;
-        this.channel=channel;
+        this.channel="__key*__:"+channel+".*";
         this.flag=true;
         jedis= new Jedis(host);
     }

@@ -8,3 +8,9 @@
        - name: "Test2"
          channel: "RT"
          listenerCount: 6
+
+ redisConfig:
+         host: "localhost"
+         port: 26379
+         db: 0
+         password: "foobared"

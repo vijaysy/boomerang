@@ -1,21 +1,47 @@
 # boomerang
 
 ## Code example
+
+### Sending retry request   
    
    ```java 
-   Boomerang.reappear(RetryItemBuilder.create()
-                .withMessageId("m33")
-                .withMessage("Test Message")
-                .withHttpMethod(HttpMethod.POST)
-                .withHttpUrl("http://localhost:8080")
-                .withRetryPattern(integers)
-                .withNextRetry(0)
-                .withFallbackHttpMethod(HttpMethod.PUT)
-                .withFallbackHttpUrl("http://localhost:8080/fallback")
-                .withChannel("RT")
-                .build());
+    Optional<RetryItem> retryItem = Boomerang.isRetryExist("m33");
+           if (retryItem.isPresent())
+               Boomerang.reappear(retryItem.get());
+           else
+               Boomerang.reappear(RetryItemBuilder.create()
+                       .withMessageId("m33")
+                       .withMessage("Test Message")
+                       .withHttpMethod(HttpMethod.POST)
+                       .withHttpUrl("http://localhost:8080")
+                       .withRetryPattern(integers)
+                       .withNextRetry(0)
+                       .withFallbackHttpMethod(HttpMethod.PUT)
+                       .withFallbackHttpUrl("http://localhost:8080/fallback")
+                       .withChannel("RT")
+                       .build());
    ```
+### Listener yml example
 
+    ```
+         groupName: "testGroup"
+        
+         threadConfigs:
+               - name: "Test1"
+                 channel: "RT"
+                 listenerCount: 5
+               - name: "Test2"
+                 channel: "RT"
+                 listenerCount: 6
+        
+         redisConfig:
+                 host: "localhost"
+                 port: 26379
+                 db: 0
+                 password: "foobared"
+    ```             
+
+    
 1. Redis server should be running on your local machine
    Every time you restart redis have to set notify-keyspace-events
    Command: redis-cli config set notify-keyspace-events KEA

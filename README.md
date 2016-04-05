@@ -14,7 +14,6 @@
                 .withFallbackHttpUrl("http://localhost:8080/fallback")
                 .withChannel("RT")
                 .build());
-                           .observe();
    ```
 
 1. Redis server should be running on your local machine

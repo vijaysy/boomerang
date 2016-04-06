@@ -32,7 +32,6 @@ public class RetryItem implements Serializable{
         this.nextRetry=nextRetry;
         setRetryPattern(Arrays.toString(retryPattern).replaceAll("\\[|\\]||\\s", "").replace(" ",""));
         setMaxRetry(retryPattern.length);
-        this.fallbackHttpMethod =fHttpMethod;
         this.fallbackHttpUri =fHttpUri;
         this.channel=channel;
 
@@ -75,9 +74,6 @@ public class RetryItem implements Serializable{
     @Column(name = "fallback_http_uri")
     private String fallbackHttpUri;
 
-    @Column(name = "fallback_http_method")
-    private HttpMethod fallbackHttpMethod;
-
 
     public Integer getId() {
         return id;
@@ -85,10 +81,6 @@ public class RetryItem implements Serializable{
 
     public String getMessageId() {
         return messageId;
-    }
-
-    public HttpMethod getFallbackHttpMethod() {
-        return fallbackHttpMethod;
     }
 
     public String getFallbackHttpUri() {
@@ -121,10 +113,6 @@ public class RetryItem implements Serializable{
 
     public String getChannel() {
         return channel;
-    }
-
-    public void setFallbackHttpMethod(HttpMethod fHttpMethod) {
-        this.fallbackHttpMethod = fHttpMethod;
     }
 
     public void setFallbackHttpUri(String fHttpUri) {

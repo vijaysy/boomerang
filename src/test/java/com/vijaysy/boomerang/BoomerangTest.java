@@ -25,7 +25,6 @@ public class BoomerangTest {
                     .withHttpUrl("http://localhost:8080/mock/post")
                     .withRetryPattern(integers)
                     .withNextRetry(0)
-                    .withFallbackHttpMethod(HttpMethod.PUT)
                     .withFallbackHttpUrl("http://localhost:8080/mock")
                     .withChannel("RT")
                     .build());

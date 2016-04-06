@@ -16,10 +16,6 @@ public class ModelsTest {
         create(new RetryItem("m11","Hi1", HttpMethod.GET,"URL1",0,integers,"fURL1",HttpMethod.POST,"RT"));
         create(new RetryItem("m22","Hi2", HttpMethod.PUT,"URL2",0,integers,"fURL2",HttpMethod.GET,"RT"));
 
-        List<RetryItem> retryItemList = read();
-        for (RetryItem retryItem1: retryItemList)
-            System.out.println(retryItem1.getFallbackHttpMethod());
-
     }
 
     public static Integer create(RetryItem retryItem) {

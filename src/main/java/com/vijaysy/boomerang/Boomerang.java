@@ -5,7 +5,6 @@ import com.vijaysy.boomerang.exception.InvalidRetryItem;
 import com.vijaysy.boomerang.exception.RetryCountException;
 import com.vijaysy.boomerang.models.RetryItem;
 import com.vijaysy.boomerang.utils.HibernateUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -19,7 +18,6 @@ import java.util.Optional;
 /**
  * Created by vijaysy on 01/04/16.
  */
-@Slf4j
 public final class Boomerang {
 
     private Boomerang(){}
@@ -29,17 +27,17 @@ public final class Boomerang {
             throw new RetryCountException("Retry count crossed the max retry count");
         JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost");
         Jedis jedis = pool.getResource();
-        jedis.set(retryItem.getChannel()+"."+retryItem.getMessageId(),"dummyValue");
-        String nextRetry = retryItem.getRetryPattern()[retryItem.getNextRetry()];
+        int timeout=Integer.valueOf(retryItem.getRetryPattern()[retryItem.getNextRetry()])*60;
+        String key = retryItem.getChannel()+"."+retryItem.getMessageId();
         retryItem.setNextRetry(retryItem.getNextRetry()+1);
-        jedis.expire(retryItem.getChannel()+"."+retryItem.getMessageId(),Integer.valueOf(nextRetry)*60);
+        jedis.setex(key,timeout,key);
         Session session = null;
         try {
             session = HibernateUtil.getSessionWithTransaction();
             session.saveOrUpdate(retryItem);
             HibernateUtil.commitTransaction(session);
         }catch (Exception e){
-            log.info("Exception while storing object "+e.toString());
+            //log.info("Exception while storing object "+e.toString());
             HibernateUtil.rollbackTransaction(session);
             jedis.del(retryItem.getChannel()+"."+retryItem.getMessageId());
             throw new DBException("Error occurred while storing  RetryItem");
@@ -58,13 +56,21 @@ public final class Boomerang {
     }
 
     public static RetryItem readRetryItem(String messageId){
-        Session session = HibernateUtil.getSession();
-        Criteria criteria = session.createCriteria(RetryItem.class)
-                .add(Restrictions.eq("messageId",messageId));
-        RetryItem dBRetryItem=(RetryItem)criteria.uniqueResult();
-        HibernateUtil.closeSession(session);
-        return dBRetryItem;
+        try {
+            Session session = HibernateUtil.getSession();
+            Criteria criteria = session.createCriteria(RetryItem.class)
+                    .add(Restrictions.eq("messageId",messageId));
+            RetryItem dBRetryItem=(RetryItem)criteria.uniqueResult();
+            HibernateUtil.closeSession(session);
+            return dBRetryItem;
+        }catch (Exception e){
+            System.out.println("Exception while reading object with messageID "+ messageId);
+            return null;
+        }
+
     }
+
+
 
     public static boolean isValidRetryItem(RetryItem retryItem){
         //TODO: need to validate maxRetry for -ve values and null attributes

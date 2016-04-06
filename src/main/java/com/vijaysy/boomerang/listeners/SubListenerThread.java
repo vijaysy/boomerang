@@ -3,7 +3,10 @@ package com.vijaysy.boomerang.listeners;
 import com.vijaysy.boomerang.Boomerang;
 import com.vijaysy.boomerang.models.RetryItem;
 import com.vijaysy.boomerang.utils.JerseyClient;
+import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisPubSub;
 
 import java.util.Objects;
@@ -11,6 +14,7 @@ import java.util.Objects;
 /**
  * Created by vijaysy on 02/04/16.
  */
+@Slf4j
 public class SubListenerThread implements Runnable {
 
     private String host;
@@ -39,7 +43,6 @@ public class SubListenerThread implements Runnable {
 
     @Override
     public void run() {
-        //log.info("Listener Started");
         while (flag){
             jedis.psubscribe(new JedisPubSub() {
                 @Override
@@ -49,16 +52,27 @@ public class SubListenerThread implements Runnable {
 
                 @Override
                 public void onPMessage(String pattern, String channel, String message) {
-//                    log.info("[Pattern:" + pattern + "]");
-//                    log.info("[Channel: " + channel + "]");
-//                    log.info("[Message: " + message + "]");
+                    log.info("[Pattern:" + pattern + "]\t"+"[Channel: " + channel + "]\t"+"[Message: " + message + "]");
                     if(!message.equals("expired")) return;
-                    //log.info("Got expired Call");
                     String messageId=channel.substring(channel.indexOf('.')+1);
-                    RetryItem retryItem = Boomerang.readRetryItem(messageId);
-                    if(Objects.isNull(retryItem)) return;
-                    boolean f = (retryItem.getNextRetry()!=retryItem.getMaxRetry())?new JerseyClient(retryItem).execute():new JerseyClient(retryItem).executeFallBack();
-                    //TODO: handle failed executeFallBack method
+                    try {
+                        JedisPool pool = new JedisPool(new JedisPoolConfig(),host);
+                        Jedis jedis = pool.getResource();
+                        if(jedis.setnx(messageId,messageId)==1){
+                            RetryItem retryItem = Boomerang.readRetryItem(messageId);
+                            jedis.expire(messageId,20);
+                            if(Objects.isNull(retryItem)) return;
+                            boolean f = (retryItem.getNextRetry()!=retryItem.getMaxRetry())?new JerseyClient(retryItem).execute():new JerseyClient(retryItem).executeFallBack();
+                            //TODO: handle failed executeFallBack method
+                        }
+
+                    }catch (Exception e){
+                        log.error("Exception while taking lock");
+                        return;
+                    }finally {
+                        jedis.del(messageId);
+                        jedis.close();
+                    }
                 }
             }, channel);
         }

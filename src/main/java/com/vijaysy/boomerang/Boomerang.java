@@ -5,6 +5,7 @@ import com.vijaysy.boomerang.exception.InvalidRetryItem;
 import com.vijaysy.boomerang.exception.RetryCountException;
 import com.vijaysy.boomerang.models.RetryItem;
 import com.vijaysy.boomerang.utils.HibernateUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -18,6 +19,7 @@ import java.util.Optional;
 /**
  * Created by vijaysy on 01/04/16.
  */
+@Slf4j
 public final class Boomerang {
 
     private Boomerang(){}
@@ -25,6 +27,7 @@ public final class Boomerang {
     public static boolean reappear (RetryItem retryItem) throws InvalidRetryItem,DBException,RetryCountException{
         if(retryItem.getMaxRetry()<retryItem.getNextRetry()+1)
             throw new RetryCountException("Retry count crossed the max retry count");
+        // TODO: 06/04/16
         JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost");
         Jedis jedis = pool.getResource();
         int timeout=Integer.valueOf(retryItem.getRetryPattern()[retryItem.getNextRetry()])*60;
@@ -37,7 +40,7 @@ public final class Boomerang {
             session.saveOrUpdate(retryItem);
             HibernateUtil.commitTransaction(session);
         }catch (Exception e){
-            //log.info("Exception while storing object "+e.toString());
+            log.info("Exception while storing object "+e.toString());
             HibernateUtil.rollbackTransaction(session);
             jedis.del(retryItem.getChannel()+"."+retryItem.getMessageId());
             throw new DBException("Error occurred while storing  RetryItem");

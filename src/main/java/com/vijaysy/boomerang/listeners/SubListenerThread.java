@@ -47,7 +47,7 @@ public class SubListenerThread implements Runnable {
             jedis.psubscribe(new JedisPubSub() {
                 @Override
                 public void onPSubscribe(String pattern, int subscribedChannels) {
-                    System.out.println("onPSubscribe " + pattern + " " + subscribedChannels);
+                   log.info("onPSubscribe " + pattern + " " + subscribedChannels);
                 }
 
                 @Override
@@ -65,7 +65,6 @@ public class SubListenerThread implements Runnable {
                             boolean f = (retryItem.getNextRetry()!=retryItem.getMaxRetry())?new JerseyClient(retryItem).execute():new JerseyClient(retryItem).executeFallBack();
                             //TODO: handle failed executeFallBack method
                         }
-
                     }catch (Exception e){
                         log.error("Exception while taking lock");
                         return;

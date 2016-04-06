@@ -55,9 +55,9 @@ public class SubListenerThread implements Runnable {
                     log.info("[Pattern:" + pattern + "]\t"+"[Channel: " + channel + "]\t"+"[Message: " + message + "]");
                     if(!message.equals("expired")) return;
                     String messageId=channel.substring(channel.indexOf('.')+1);
+                    JedisPool pool = new JedisPool(new JedisPoolConfig(),host);
+                    Jedis jedis = pool.getResource();
                     try {
-                        JedisPool pool = new JedisPool(new JedisPoolConfig(),host);
-                        Jedis jedis = pool.getResource();
                         if(jedis.setnx(messageId,messageId)==1){
                             RetryItem retryItem = Boomerang.readRetryItem(messageId);
                             jedis.expire(messageId,20);
@@ -70,7 +70,6 @@ public class SubListenerThread implements Runnable {
                         log.error("Exception while taking lock");
                         return;
                     }finally {
-                        jedis.del(messageId);
                         jedis.close();
                     }
                 }

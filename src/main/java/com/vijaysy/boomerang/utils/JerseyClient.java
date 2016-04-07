@@ -2,6 +2,7 @@ package com.vijaysy.boomerang.utils;
 
 
 import com.vijaysy.boomerang.models.RetryItem;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -12,6 +13,7 @@ import javax.ws.rs.core.Response;
 /**
  * Created by vijaysy on 02/04/16.
  */
+@Slf4j
 public class JerseyClient {
     private Client client;
     private RetryItem retryItem;
@@ -24,9 +26,9 @@ public class JerseyClient {
 
     //TODO: need to check overload in creation of WebTarget and Client
 
-    public boolean execute(){
+    public boolean execute() throws Exception{
         WebTarget webTarget = client.target(retryItem.getHttpUri());
-        System.out.printf("Execute: "+retryItem.getMessageId());
+        log.info("Making retry call for messageId:"+retryItem.getMessageId());
         switch (retryItem.getHttpMethod()){
             case POST: response=webTarget.request().buildPost(Entity.json(retryItem.getMessage())).invoke();
                 break;
@@ -36,12 +38,12 @@ public class JerseyClient {
                 break;
             default: return false;
         }
-        System.out.printf(response.toString());
+        log.info("Response for retry call"+response.toString());
       return true;
 
     }
 
-    public boolean executeFallBack(){
+    public boolean executeFallBack() throws Exception{
         WebTarget webTarget = client.target(retryItem.getFallbackHttpUri()+"/"+retryItem.getMessageId()+"/fallback");
         response=webTarget.request().buildPut(Entity.text("")).invoke();
         return true;

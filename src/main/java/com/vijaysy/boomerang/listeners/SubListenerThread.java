@@ -66,7 +66,7 @@ public class SubListenerThread implements Runnable {
                             //TODO: handle failed executeFallBack method
                         }
                     }catch (Exception e){
-                        log.error("Exception while taking lock");
+                        log.error("JerseyClient exception or LockException");
                         return;
                     }finally {
                         jedis.close();

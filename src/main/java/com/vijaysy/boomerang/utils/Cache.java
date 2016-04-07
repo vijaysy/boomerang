@@ -38,10 +38,6 @@ public class Cache {
     }
 
     public Jedis getJedisResource() {
-        if(Objects.nonNull(jedisSentinelPool)) return jedisSentinelPool.getResource();
-        JedisPoolConfig poolConfig = new JedisPoolConfig();
-        poolConfig.setMaxTotal(8);
-        this.jedisSentinelPool = new JedisSentinelPool(master, Sets.newHashSet(sentinels.split(",")), poolConfig, timeout, password, db);
         return this.jedisSentinelPool.getResource();
     }
 

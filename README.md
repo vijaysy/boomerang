@@ -5,20 +5,21 @@
 ### Sending retry request   
    
    ```java 
-    Optional<RetryItem> retryItem = Boomerang.isRetryExist("m33");
-           if (retryItem.isPresent())
-               Boomerang.reappear(retryItem.get());
-           else
-               Boomerang.reappear(RetryItemBuilder.create()
-                       .withMessageId("m33")
-                       .withMessage("Test Message")
-                       .withHttpMethod(HttpMethod.POST)
-                       .withHttpUrl("http://localhost:8080")
-                       .withRetryPattern(new Integer[]{1, 2, 3,})
-                       .withNextRetry(0)
-                       .withFallbackHttpUrl("http://localhost:8080/fallback")
-                       .withChannel("RT")
-                       .build());
+     Cache cache=new Cache("mymaster","127.0.0.1:26379",2,"foobared",0);
+            Optional<RetryItem> retryItem = Boomerang.isRetryExist("m44");
+            if (retryItem.isPresent())
+                Boomerang.reappear(retryItem.get(),cache);
+            else
+                Boomerang.reappear(RetryItemBuilder.create()
+                        .withMessageId("m44")
+                        .withMessage("{\"input\":\"Hi12\"}")
+                        .withHttpMethod(HttpMethod.POST)
+                        .withHttpUrl("http://localhost:8080/mock/post")
+                        .withRetryPattern(integers)
+                        .withNextRetry(0)
+                        .withFallbackHttpUrl("http://localhost:8080/mock")
+                        .withChannel("RT")
+                        .build(),cache);
    ```
 ### Listener yml example
     

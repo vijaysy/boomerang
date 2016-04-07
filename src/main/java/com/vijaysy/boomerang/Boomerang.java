@@ -4,7 +4,6 @@ import com.vijaysy.boomerang.exception.DBException;
 import com.vijaysy.boomerang.exception.InvalidRetryItem;
 import com.vijaysy.boomerang.exception.RetryCountException;
 import com.vijaysy.boomerang.models.RetryItem;
-import com.vijaysy.boomerang.utils.Cache;
 import com.vijaysy.boomerang.utils.HibernateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Criteria;
@@ -23,10 +22,9 @@ public final class Boomerang {
 
     private Boomerang(){}
 
-    public static boolean reappear (RetryItem retryItem,Cache cache) throws InvalidRetryItem,DBException,RetryCountException{
+    public static boolean reappear (RetryItem retryItem,Jedis jedis) throws InvalidRetryItem,DBException,RetryCountException{
         if(retryItem.getMaxRetry()<retryItem.getNextRetry()+1)
             throw new RetryCountException("Retry count crossed the max retry count");
-        Jedis jedis = cache.getJedisResource();
         int timeout=Integer.valueOf(retryItem.getRetryPattern()[retryItem.getNextRetry()])*60;
         String key = retryItem.getChannel()+"."+retryItem.getMessageId();
         retryItem.setNextRetry(retryItem.getNextRetry()+1);

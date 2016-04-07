@@ -22,7 +22,7 @@ public class BoomerangTest {
 
         Optional<RetryItem> retryItem = Boomerang.isRetryExist("m44");
         if (retryItem.isPresent())
-            Boomerang.reappear(retryItem.get(),cache);
+            Boomerang.reappear(retryItem.get(),cache.getJedisResource());
         else
             Boomerang.reappear(RetryItemBuilder.create()
                     .withMessageId("m44")
@@ -33,6 +33,6 @@ public class BoomerangTest {
                     .withNextRetry(0)
                     .withFallbackHttpUrl("http://localhost:8080/mock")
                     .withChannel("RT")
-                    .build(),cache);
+                    .build(),cache.getJedisResource());
     }
 }

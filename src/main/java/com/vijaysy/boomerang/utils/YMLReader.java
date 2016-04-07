@@ -23,7 +23,7 @@ public class YMLReader {
         listenerConfig = new ListenerConfig();
         listenerConfig.setThreadConfigs((List<ThreadConfig>) map.get("threadConfigs"));
         listenerConfig.setGroupName((String)map.get("groupName"));
-        listenerConfig.setRedisConfig((HashMap<String, String>) map.get("redisConfig"));
+        listenerConfig.setCacheConfig((HashMap<String, String>) map.get("cacheConfig"));
     }
 
     public ListenerConfig getListenerConfig() {

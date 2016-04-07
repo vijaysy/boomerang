@@ -7,6 +7,7 @@ import com.vijaysy.boomerang.utils.JerseyClient;
 import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
+import redis.clients.jedis.JedisSentinelPool;
 
 import java.util.Objects;
 
@@ -19,6 +20,7 @@ public class SubListenerThread implements Runnable {
     private String channel;
     private Jedis jedis ;
     private Cache cache;
+    private JedisSentinelPool jedisSentinelPool;
     private volatile Boolean flag;
 
 

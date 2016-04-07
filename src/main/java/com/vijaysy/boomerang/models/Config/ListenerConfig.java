@@ -16,7 +16,7 @@ import java.util.Objects;
 public class ListenerConfig {
     private String groupName;
     private List<ThreadConfig> threadConfigs = new ArrayList<ThreadConfig>();
-    private RedisConfig redisConfig = new RedisConfig();
+    private CacheConfig cacheConfig = new CacheConfig();
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
@@ -26,10 +26,11 @@ public class ListenerConfig {
         this.threadConfigs = threadConfigs;
     }
 
-    public void setRedisConfig(HashMap<String,String> hashMap) {
-        this.redisConfig.setHost(Objects.isNull(hashMap.get("host"))?"localhost":hashMap.get("host"));
-        this.redisConfig.setDb(Objects.isNull(hashMap.get("db"))?0:Integer.valueOf(hashMap.get("db")));
-        this.redisConfig.setPassword(Objects.isNull(hashMap.get("password"))?"":hashMap.get("password"));
-        this.redisConfig.setPort(Objects.isNull(hashMap.get("port"))?26379:Integer.valueOf(hashMap.get("port")));
+    public void setCacheConfig(HashMap<String,String> hashMap) {
+        this.cacheConfig.setMaster(Objects.isNull(hashMap.get("master"))?"mymaster":hashMap.get("master"));
+        this.cacheConfig.setSentinels(Objects.isNull(hashMap.get("sentinels"))?"127.0.0.1:26379":hashMap.get("sentinels"));
+        this.cacheConfig.setPassword(Objects.isNull(hashMap.get("password"))?"foobared":hashMap.get("password"));
+        this.cacheConfig.setTimeout(Objects.isNull(hashMap.get("timeout"))?2:Integer.valueOf(hashMap.get("timeout")));
+        this.cacheConfig.setDb(Objects.isNull(hashMap.get("timeout"))?2:Integer.valueOf(hashMap.get("timeout")));
     }
 }

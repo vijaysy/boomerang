@@ -21,14 +21,11 @@ import java.util.Optional;
 @Slf4j
 public final class Boomerang {
 
-    private static Cache boomerangCache=null;
     private Boomerang(){}
 
-    public static boolean reappear (RetryItem retryItem) throws InvalidRetryItem,DBException,RetryCountException{
+    public static boolean reappear (RetryItem retryItem,Cache cache) throws InvalidRetryItem,DBException,RetryCountException{
         if(retryItem.getMaxRetry()<retryItem.getNextRetry()+1)
             throw new RetryCountException("Retry count crossed the max retry count");
-        // TODO: 06/04/16
-        Cache cache =(Objects.isNull(boomerangCache))?new Cache("mymaster","127.0.0.1:26379",2,"foobared",0):boomerangCache;
         Jedis jedis = cache.getJedisResource();
         int timeout=Integer.valueOf(retryItem.getRetryPattern()[retryItem.getNextRetry()])*60;
         String key = retryItem.getChannel()+"."+retryItem.getMessageId();
@@ -51,13 +48,6 @@ public final class Boomerang {
         }
         return true;
     }
-
-    public static boolean reappear (RetryItem retryItem,Cache cache) throws InvalidRetryItem,DBException,RetryCountException{
-        boomerangCache=cache;
-        reappear(retryItem);
-        return true;
-    }
-
 
     public static Optional<RetryItem> isRetryExist(String messageId){
         RetryItem retryItem = readRetryItem(messageId);

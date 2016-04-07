@@ -9,8 +9,10 @@
          channel: "RT"
          listenerCount: 6
 
- redisConfig:
-         host: "localhost"
-         port: 26379
-         db: 0
-         password: "foobared"
+ cacheConfig:
+      master: mymaster
+      sentinels: 127.0.0.1:26379
+      password: foobared
+      timeout: 2
+      db: 0
+      maxThreads: 8

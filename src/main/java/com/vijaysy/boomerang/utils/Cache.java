@@ -1,6 +1,7 @@
 package com.vijaysy.boomerang.utils;
 
-import jersey.repackaged.com.google.common.collect.Sets;
+import com.google.common.collect.Sets;
+import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPoolConfig;
@@ -16,24 +17,17 @@ import java.util.Objects;
 @Singleton
 public class Cache {
 
-    private String master ;
-    private String sentinels;
-    private JedisSentinelPool jedisSentinelPool = null;
-    private int timeout;
-    private String password;
-    private int db;
+    private JedisSentinelPool jedisSentinelPool;
 
-    private Cache(){}
+    @Inject
+    public Cache(JedisSentinelPool jedisSentinelPool) {
+        this.jedisSentinelPool=jedisSentinelPool;
+    }
 
     public Cache(String master,String sentinels,int timeout,String password,int db) {
-        this.master=master;
-        this.sentinels=sentinels;
-        this.timeout=timeout;
-        this.password=password;
-        this.db=db;
         JedisPoolConfig poolConfig = new JedisPoolConfig();
         poolConfig.setMaxTotal(8);
-        jedisSentinelPool = new JedisSentinelPool(this.master, Sets.newHashSet(this.sentinels.split(",")), poolConfig, this.timeout, this.password, this.db);
+        jedisSentinelPool = new JedisSentinelPool(master, Sets.newHashSet(sentinels.split(",")), poolConfig,timeout,password,db);
 
     }
 

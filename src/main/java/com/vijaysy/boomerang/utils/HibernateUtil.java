@@ -7,7 +7,6 @@ import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 
-import java.io.File;
 import java.util.Objects;
 
 /**
@@ -18,7 +17,7 @@ public class HibernateUtil {
 
     public static SessionFactory getSessionFactory() {
         if(Objects.isNull(sessionFactory)){
-            Configuration configuration = new Configuration().configure(new File("config/hibernate.cfg.xml"));
+            Configuration configuration = new Configuration().configure();
             configuration.addAnnotatedClass(RetryItem.class);
             StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
             sessionFactory = configuration.buildSessionFactory(builder.build());

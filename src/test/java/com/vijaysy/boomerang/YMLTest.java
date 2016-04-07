@@ -1,14 +1,7 @@
 package com.vijaysy.boomerang;
 
-import com.esotericsoftware.yamlbeans.YamlReader;
-import com.vijaysy.boomerang.models.Config.ListenerConfig;
-import com.vijaysy.boomerang.models.Config.ThreadConfig;
+import com.vijaysy.boomerang.utils.YMLReader;
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.FileReader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by vijaysy on 04/04/16.
@@ -16,14 +9,8 @@ import java.util.Map;
 @Slf4j
 public class YMLTest {
     public static void main(String [] args) throws Exception{
-        YamlReader reader = new YamlReader(new FileReader("config/boomerangListener.yml"));
-        Object object = reader.read();
-        Map map = (Map)object;
-        ListenerConfig listenerConfig = new ListenerConfig();
-        listenerConfig.setThreadConfigs((List<ThreadConfig>) map.get("threadConfigs"));
-        listenerConfig.setGroupName((String)map.get("groupName"));
-        listenerConfig.setRedisConfig((HashMap<String, String>) map.get("redisConfig"));
+        YMLReader ymlReader = new YMLReader();
         log.info("Testing log");
-        log.info(""+listenerConfig);
+        log.info(""+ymlReader.getListenerConfig());
     }
 }

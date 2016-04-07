@@ -24,7 +24,7 @@ public class RetryItem implements Serializable{
 
     public RetryItem(){}
 
-    public RetryItem(String messageId, String message , HttpMethod httpMethod, String httpUri, Integer nextRetry, Integer[] retryPattern,String fHttpUri,HttpMethod fHttpMethod, String channel){
+    public RetryItem(String messageId, String message , HttpMethod httpMethod, String httpUri, int nextRetry, Integer[] retryPattern,String fHttpUri,HttpMethod fHttpMethod, String channel){
         this.messageId=messageId;
         this.message=message;
         this.httpMethod=httpMethod;
@@ -40,7 +40,7 @@ public class RetryItem implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id",unique = true)
-    private Integer id;
+    private int id;
 
     @Column(name = "message_id",unique = true)
     @NotNull
@@ -59,10 +59,10 @@ public class RetryItem implements Serializable{
     private String retryPattern;
 
     @Column(name = "next_retry")
-    private Integer nextRetry;
+    private int nextRetry;
 
     @Column(name = "max_retry")
-    private Integer maxRetry;
+    private int maxRetry;
 
     @Column(name = "channel")
     @NotNull
@@ -75,7 +75,7 @@ public class RetryItem implements Serializable{
     private String fallbackHttpUri;
 
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
@@ -87,7 +87,7 @@ public class RetryItem implements Serializable{
         return fallbackHttpUri;
     }
 
-    public Integer getMaxRetry() {
+    public int getMaxRetry() {
         return maxRetry;
     }
 
@@ -95,7 +95,7 @@ public class RetryItem implements Serializable{
         return retryPattern.split(",");
     }
 
-    public Integer getNextRetry() {
+    public int getNextRetry() {
         return nextRetry;
     }
 
@@ -119,7 +119,7 @@ public class RetryItem implements Serializable{
         this.fallbackHttpUri = fHttpUri;
     }
 
-    public void setMaxRetry(Integer maxRetry) {
+    public void setMaxRetry(int maxRetry) {
         this.maxRetry = maxRetry;
     }
 
@@ -127,7 +127,7 @@ public class RetryItem implements Serializable{
         this.retryPattern = retryPattern;
     }
 
-    public void setNextRetry(Integer nextRetry) {
+    public void setNextRetry(int nextRetry) {
         this.nextRetry = nextRetry;
     }
 
@@ -143,7 +143,7 @@ public class RetryItem implements Serializable{
         this.message = message;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 

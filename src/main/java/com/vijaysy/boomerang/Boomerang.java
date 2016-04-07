@@ -4,14 +4,13 @@ import com.vijaysy.boomerang.exception.DBException;
 import com.vijaysy.boomerang.exception.InvalidRetryItem;
 import com.vijaysy.boomerang.exception.RetryCountException;
 import com.vijaysy.boomerang.models.RetryItem;
+import com.vijaysy.boomerang.utils.Cache;
 import com.vijaysy.boomerang.utils.HibernateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -22,14 +21,15 @@ import java.util.Optional;
 @Slf4j
 public final class Boomerang {
 
+    private static Cache boomerangCache=null;
     private Boomerang(){}
 
     public static boolean reappear (RetryItem retryItem) throws InvalidRetryItem,DBException,RetryCountException{
         if(retryItem.getMaxRetry()<retryItem.getNextRetry()+1)
             throw new RetryCountException("Retry count crossed the max retry count");
         // TODO: 06/04/16
-        JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost");
-        Jedis jedis = pool.getResource();
+        Cache cache =(Objects.isNull(boomerangCache))?new Cache("mymaster","127.0.0.1:26379",2,"foobared",0):boomerangCache;
+        Jedis jedis = cache.getJedisResource();
         int timeout=Integer.valueOf(retryItem.getRetryPattern()[retryItem.getNextRetry()])*60;
         String key = retryItem.getChannel()+"."+retryItem.getMessageId();
         retryItem.setNextRetry(retryItem.getNextRetry()+1);
@@ -49,6 +49,12 @@ public final class Boomerang {
             jedis.close();
 
         }
+        return true;
+    }
+
+    public static boolean reappear (RetryItem retryItem,Cache cache) throws InvalidRetryItem,DBException,RetryCountException{
+        boomerangCache=cache;
+        reappear(retryItem);
         return true;
     }
 

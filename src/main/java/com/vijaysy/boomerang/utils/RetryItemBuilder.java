@@ -43,7 +43,7 @@ public final class RetryItemBuilder {
     }
 
     // TODO: 04/04/16  not required, should be zero by default
-    public RetryItemBuilder withNextRetry(Integer nextRetry){
+    public RetryItemBuilder withNextRetry(int nextRetry){
         this.retryItem.setNextRetry(nextRetry);
         return this;
     }

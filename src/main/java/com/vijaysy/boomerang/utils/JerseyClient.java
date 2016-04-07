@@ -21,12 +21,12 @@ public class JerseyClient {
 
     public JerseyClient(RetryItem retryItem){
         this.retryItem=retryItem;
-        this.client= ClientBuilder.newClient();
+        this.client= ClientBuilder.newClient(); // todo don't create every time ... use connection pool
     }
 
     //TODO: need to check overload in creation of WebTarget and Client
 
-    public boolean execute() throws Exception{
+    public boolean execute() {
         WebTarget webTarget = client.target(retryItem.getHttpUri());
         log.info("Making retry call for messageId:"+retryItem.getMessageId());
         switch (retryItem.getHttpMethod()){
@@ -43,7 +43,7 @@ public class JerseyClient {
 
     }
 
-    public boolean executeFallBack() throws Exception{
+    public boolean executeFallBack(){
         WebTarget webTarget = client.target(retryItem.getFallbackHttpUri()+"/"+retryItem.getMessageId()+"/fallback");
         response=webTarget.request().buildPut(Entity.text("")).invoke();
         return true;

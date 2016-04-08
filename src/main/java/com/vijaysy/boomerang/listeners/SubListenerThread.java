@@ -1,6 +1,5 @@
 package com.vijaysy.boomerang.listeners;
 
-import com.vijaysy.boomerang.Boomerang;
 import com.vijaysy.boomerang.models.RetryItem;
 import com.vijaysy.boomerang.utils.Cache;
 import com.vijaysy.boomerang.utils.JerseyClient;
@@ -51,7 +50,7 @@ public class SubListenerThread implements Runnable {
                     Jedis jedis=cache.getJedisResource();
                     try {
                         if(jedis.setnx(messageId,messageId)==1){
-                            RetryItem retryItem = Boomerang.readRetryItem(messageId);
+                            RetryItem retryItem=new RetryItem();// = BoomerangApplication.readRetryItem(messageId);
                             jedis.expire(messageId,20);
                             if(Objects.isNull(retryItem)) return;
                             JerseyClient jerseyClient = new JerseyClient(retryItem);

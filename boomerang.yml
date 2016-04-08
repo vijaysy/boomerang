@@ -1,0 +1,68 @@
+name: boomerang
+
+server:
+  type: default
+  maxThreads: 128
+  minThreads: 128
+  applicationConnectors:
+    - type: http
+      port: 40404
+  adminConnectors:
+    - type: http
+      port: 40405
+  requestLog:
+    timeZone: IST
+    appenders:
+      - type: file
+        currentLogFilename: ./logs/access.log
+        threshold: INFO
+        archive: true
+        archivedLogFilenamePattern: ./logs/access-%d{yyyy-MM-dd-HH}.log.gz
+        archivedFileCount: 20
+        timeZone: IST
+
+
+cacheConfig:
+      master: mymaster
+      sentinels: 127.0.0.1:26379
+      password: foobared
+      timeout: 2
+      db: 0
+      maxThreads: 8
+
+logging:
+  level: INFO
+  loggers:
+    "com.flipkart.orchestrator.resources": ALL
+  appenders:
+    - type: file
+      currentLogFilename: ./logs/boomerang.log
+      threshold: INFO
+      archive: true
+      archivedLogFilenamePattern: ./logs/boomerang-%d{yyyy-MM-dd-HH}.log.gz
+      archivedFileCount: 20
+      timeZone: IST
+      logFormat: "%highlight(%-5level) [%date] [%thread] [%X{X-Flipkart-Client}] [%cyan(%logger{0})]: %message%n"
+    - type: console
+
+database:
+  driverClass: com.mysql.jdbc.Driver
+  user: root
+  password: ""
+  url: jdbc:mysql://localhost:3306/company?autoReconnect=true
+  properties:
+    charSet: UTF-8
+    hibernate.dialect: org.hibernate.dialect.MySQLDialect
+    hibernate.hbm2ddl.auto: create
+    hibernate.show_sql: true
+  maxWaitForConnection: 1s
+  validationQuery: "/* MyApplication Health Check */ SELECT 1"
+  validationQueryTimeout: 3s
+  minSize: 8
+  maxSize: 32
+  checkConnectionWhileIdle: false
+  checkConnectionOnBorrow: true
+  evictionInterval: 10s
+  minIdleTime: 1 minute
+  defaultTransactionIsolation: READ_COMMITTED
+

@@ -1,28 +1,40 @@
 group 'boomerang'
-version '1.0-SNAPSHOT'
+
 
 apply plugin: 'java'
 apply plugin: 'idea'
 
 sourceCompatibility = 1.5
 
+buildscript {
+    repositories { jcenter() }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2'
+    }
+}
+
 repositories {
     mavenCentral()
 }
 
+
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
-    compile 'org.hibernate:hibernate-core:5.1.0.Final',
-            'mysql:mysql-connector-java:5.1.38',
+    compile 'io.dropwizard:dropwizard-core:0.8.2',
+            'io.dropwizard:dropwizard-views:0.8.2',
+            'io.dropwizard:dropwizard-client:0.8.2',
+            'io.dropwizard:dropwizard-hibernate:0.8.2',
+            'com.hubspot.dropwizard:dropwizard-guice:0.8.2.0',
+            'com.fasterxml.jackson.core:jackson-annotations:2.6.3',
             'redis.clients:jedis:2.7.2',
             'org.glassfish.jersey.core:jersey-client:2.19',
-            'org.json:json:20151123',
             'org.projectlombok:lombok:1.16.6',
-            'com.esotericsoftware.yamlbeans:yamlbeans:1.09',
             'com.fasterxml.jackson.core:jackson-annotations:2.7.0',
             'junit:junit:4.12',
             'ch.qos.logback:logback-classic:1.1.6',
             'ch.qos.logback:logback-core:1.0.9',
             'org.slf4j:slf4j-api:1.7.4',
-            'com.google.inject:guice:4.0'
+            'com.google.inject:guice:4.0',
+            'mysql:mysql-connector-java:5.1.38'
+
 }

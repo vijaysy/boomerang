@@ -4,20 +4,25 @@ import com.google.common.collect.Sets;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.vijaysy.boomerang.models.Config.CacheConfig;
 import com.vijaysy.boomerang.utils.Cache;
+import io.dropwizard.setup.Environment;
+import io.dropwizard.util.Duration;
+import org.hibernate.SessionFactory;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisSentinelPool;
+import io.dropwizard.hibernate.HibernateBundle;
+
+import java.util.concurrent.ExecutorService;
 
 /**
  * Created by vijaysy on 08/04/16.
  */
 public class BoomerangModule extends AbstractModule{
 
-    private CacheConfig cacheConfig;
+    private HibernateBundle<BoomerangConfiguration> hibernateBundle;
 
-    public BoomerangModule(CacheConfig cacheConfig){
-        this.cacheConfig=cacheConfig;
+    public BoomerangModule(HibernateBundle<BoomerangConfiguration> HibernateBundle){
+        this.hibernateBundle=HibernateBundle;
     }
 
     @Override
@@ -26,11 +31,26 @@ public class BoomerangModule extends AbstractModule{
 
     }
 
+    @Singleton
+    @Provides
+    public SessionFactory provideSessionFactory() {
+        return hibernateBundle.getSessionFactory();
+    }
+
     @Provides
     @Singleton
-    private JedisSentinelPool getJedisSentinelPool() {
+    private JedisSentinelPool getJedisSentinelPool(BoomerangConfiguration boomerangConfiguration) {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
-        poolConfig.setMaxTotal(cacheConfig.getMaxThreads());
-        return new JedisSentinelPool(cacheConfig.getMaster(), Sets.newHashSet(cacheConfig.getSentinels().split(",")), poolConfig, cacheConfig.getTimeout(), cacheConfig.getPassword(), cacheConfig.getDb());
+        poolConfig.setMaxTotal(boomerangConfiguration.getCacheConfig().getMaxThreads());
+        return new JedisSentinelPool(boomerangConfiguration.getCacheConfig().getMaster(), Sets.newHashSet(boomerangConfiguration.getCacheConfig().getSentinels().split(",")), poolConfig, boomerangConfiguration.getCacheConfig().getTimeout(), boomerangConfiguration.getCacheConfig().getPassword(),boomerangConfiguration.getCacheConfig().getDb());
+    }
+
+    @Provides
+    @Singleton
+    public ExecutorService provideThreadPool(Environment environment, BoomerangConfiguration configuration) {
+        return environment.lifecycle().executorService("orchestrator-%d")
+                .maxThreads(configuration.getAggregatePoolSize())
+                .keepAliveTime(Duration.seconds(1000))
+                .build();
     }
 }

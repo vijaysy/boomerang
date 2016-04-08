@@ -1,7 +1,7 @@
 package com.vijaysy.boomerang.listeners;
 
 import com.vijaysy.boomerang.models.RetryItem;
-import com.vijaysy.boomerang.utils.Cache;
+import com.vijaysy.boomerang.core.managed.Cache;
 import com.vijaysy.boomerang.utils.JerseyClient;
 import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;

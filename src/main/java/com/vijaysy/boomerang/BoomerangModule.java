@@ -4,13 +4,15 @@ import com.google.common.collect.Sets;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.vijaysy.boomerang.utils.Cache;
+import com.vijaysy.boomerang.core.managed.Cache;
+import com.vijaysy.boomerang.services.IngestionService;
+import com.vijaysy.boomerang.services.IngestionServiceImpl;
+import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
 import org.hibernate.SessionFactory;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisSentinelPool;
-import io.dropwizard.hibernate.HibernateBundle;
 
 import java.util.concurrent.ExecutorService;
 
@@ -28,6 +30,7 @@ public class BoomerangModule extends AbstractModule{
     @Override
     protected void configure() {
         bind(Cache.class).in(Singleton.class);
+        bind(IngestionService.class).to(IngestionServiceImpl.class).in(Singleton.class);
 
     }
 

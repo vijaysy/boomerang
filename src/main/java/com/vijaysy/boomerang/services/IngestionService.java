@@ -1,7 +1,10 @@
 package com.vijaysy.boomerang.services;
 
+import com.vijaysy.boomerang.models.RetryItem;
+
 /**
- * Created by vijay.yala on 08/04/16.
+ * Created by vijaysy on 08/04/16.
  */
-public class IngestionService {
+public interface IngestionService {
+    public void process(RetryItem retryItem) throws Exception;
 }

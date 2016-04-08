@@ -1,7 +1,7 @@
 package com.vijaysy.boomerang.services;
 
 import com.google.inject.Inject;
-import com.vijaysy.boomerang.core.managed.Cache;
+import com.vijaysy.boomerang.core.Cache;
 import com.vijaysy.boomerang.dao.RetryItemDAO;
 import com.vijaysy.boomerang.exception.RetryCountException;
 import com.vijaysy.boomerang.models.RetryItem;

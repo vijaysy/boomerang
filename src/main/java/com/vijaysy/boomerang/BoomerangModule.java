@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.vijaysy.boomerang.core.managed.Cache;
+import com.vijaysy.boomerang.core.Cache;
 import com.vijaysy.boomerang.services.IngestionService;
 import com.vijaysy.boomerang.services.IngestionServiceImpl;
 import io.dropwizard.hibernate.HibernateBundle;

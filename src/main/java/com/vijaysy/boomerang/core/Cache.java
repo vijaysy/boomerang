@@ -1,4 +1,4 @@
-package com.vijaysy.boomerang.core.managed;
+package com.vijaysy.boomerang.core;
 
 import com.google.inject.Inject;
 import io.dropwizard.lifecycle.Managed;

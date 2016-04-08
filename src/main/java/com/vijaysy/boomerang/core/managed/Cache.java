@@ -1,4 +1,4 @@
-package com.vijaysy.boomerang.utils;
+package com.vijaysy.boomerang.core.managed;
 
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;

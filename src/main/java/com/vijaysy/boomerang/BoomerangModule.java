@@ -8,13 +8,9 @@ import com.vijaysy.boomerang.core.Cache;
 import com.vijaysy.boomerang.services.IngestionService;
 import com.vijaysy.boomerang.services.IngestionServiceImpl;
 import io.dropwizard.hibernate.HibernateBundle;
-import io.dropwizard.setup.Environment;
-import io.dropwizard.util.Duration;
 import org.hibernate.SessionFactory;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisSentinelPool;
-
-import java.util.concurrent.ExecutorService;
 
 /**
  * Created by vijaysy on 08/04/16.
@@ -46,14 +42,5 @@ public class BoomerangModule extends AbstractModule{
         JedisPoolConfig poolConfig = new JedisPoolConfig();
         poolConfig.setMaxTotal(boomerangConfiguration.getCacheConfig().getMaxThreads());
         return new JedisSentinelPool(boomerangConfiguration.getCacheConfig().getMaster(), Sets.newHashSet(boomerangConfiguration.getCacheConfig().getSentinels().split(",")), poolConfig, boomerangConfiguration.getCacheConfig().getTimeout(), boomerangConfiguration.getCacheConfig().getPassword(),boomerangConfiguration.getCacheConfig().getDb());
-    }
-
-    @Provides
-    @Singleton
-    public ExecutorService provideThreadPool(Environment environment, BoomerangConfiguration configuration) {
-        return environment.lifecycle().executorService("orchestrator-%d")
-                .maxThreads(configuration.getAggregatePoolSize())
-                .keepAliveTime(Duration.seconds(1000))
-                .build();
     }
 }

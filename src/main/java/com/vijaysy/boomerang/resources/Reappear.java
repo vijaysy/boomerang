@@ -16,7 +16,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 /**
- * Created by vijay.yala on 08/04/16.
+ * Created by vijaysy on 08/04/16.
  */
 @Slf4j
 @Path("/")

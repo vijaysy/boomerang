@@ -34,7 +34,7 @@ public class Reappear {
     @POST()
     @ExceptionMetered
     @Timed
-    @Path("/reappear")
+    @Path("reappear")
     @UnitOfWork
     public void doReappear(RetryItem retryItem)throws Exception{
         log.info("Retry Item received: "+retryItem);

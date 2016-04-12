@@ -74,6 +74,11 @@ public class RetryItem implements Serializable{
     @Column(name = "fallback_http_uri")
     private String fallbackHttpUri;
 
+    //retry config
+
+    @Column(name = "retry_status_code")
+    int retryStatusCode;
+
 
     public int getId() {
         return id;
@@ -113,6 +118,10 @@ public class RetryItem implements Serializable{
 
     public String getChannel() {
         return channel;
+    }
+
+    public int getRetryStatusCode() {
+        return retryStatusCode;
     }
 
     public void setFallbackHttpUri(String fHttpUri) {
@@ -155,6 +164,9 @@ public class RetryItem implements Serializable{
         this.channel = channel;
     }
 
+    public void setRetryStatusCode(int retryStatusCode) {
+        this.retryStatusCode = retryStatusCode;
+    }
 
     @Override
     public boolean equals(Object o) {

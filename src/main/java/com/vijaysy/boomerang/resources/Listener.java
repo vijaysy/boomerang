@@ -4,8 +4,8 @@ import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.vijaysy.boomeranglistener.models.ThreadConfig;
-import com.vijaysy.boomeranglistener.services.ListenerService;
+import com.vijaysy.boomerang.models.Config.ThreadConfig;
+import com.vijaysy.boomerang.services.ListenerService;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.Consumes;

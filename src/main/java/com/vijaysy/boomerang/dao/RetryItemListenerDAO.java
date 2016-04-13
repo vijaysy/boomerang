@@ -1,8 +1,8 @@
 package com.vijaysy.boomerang.dao;
 
 import com.google.inject.Inject;
-import com.vijaysy.boomeranglistener.Utils.HibernateUtil;
-import com.vijaysy.boomeranglistener.models.RetryItem;
+import com.vijaysy.boomerang.utils.HibernateUtil;
+import com.vijaysy.boomerang.models.RetryItem;
 import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.Criteria;
 import org.hibernate.Session;

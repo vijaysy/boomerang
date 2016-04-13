@@ -2,7 +2,7 @@ package com.vijaysy.boomerang.utils;
 
 
 import com.google.inject.Inject;
-import com.vijaysy.boomeranglistener.models.RetryItem;
+import com.vijaysy.boomerang.models.RetryItem;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.client.Client;

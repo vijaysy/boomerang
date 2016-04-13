@@ -31,7 +31,8 @@ public class BoomerangConfiguration extends Configuration {
     @JsonProperty
     private CacheConfig cacheConfig;
 
+
     @JsonProperty
-    private int aggregatePoolSize = 32;
+    private int threadPoolSize = 50;
 
 }

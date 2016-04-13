@@ -1,11 +1,11 @@
 package com.vijaysy.boomerang.utils;
 
 
-import com.vijaysy.boomerang.models.RetryItem;
+import com.google.inject.Inject;
+import com.vijaysy.boomeranglistener.models.RetryItem;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
@@ -16,17 +16,14 @@ import javax.ws.rs.core.Response;
 @Slf4j
 public class JerseyClient {
     private Client client;
-    private RetryItem retryItem;
     private Response response;
 
-    public JerseyClient(RetryItem retryItem){
-        this.retryItem=retryItem;
-        this.client= ClientBuilder.newClient(); // todo don't create every time ... use connection pool
+    @Inject
+    public JerseyClient(Client client){
+        this.client= client;
     }
 
-    //TODO: need to check overload in creation of WebTarget and Client
-
-    public boolean execute() {
+    public Response execute(RetryItem retryItem) {
         WebTarget webTarget = client.target(retryItem.getHttpUri());
         log.info("Making retry call for messageId:"+retryItem.getMessageId());
         switch (retryItem.getHttpMethod()){
@@ -36,17 +33,17 @@ public class JerseyClient {
                 break;
             case PUT: response=webTarget.request().buildPut(Entity.json(retryItem.getMessage())).invoke();
                 break;
-            default: return false;
+            default: return Response.status(Response.Status.BAD_REQUEST).build();
         }
         log.info("Response for retry call"+response.toString());
-      return true;
+      return response;
 
     }
 
-    public boolean executeFallBack(){
+    public Response executeFallBack(RetryItem retryItem){
         WebTarget webTarget = client.target(retryItem.getFallbackHttpUri()+"/"+retryItem.getMessageId()+"/fallback");
         response=webTarget.request().buildPut(Entity.text("")).invoke();
-        return true;
+        return response;
     }
 
 

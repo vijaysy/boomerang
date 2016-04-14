@@ -199,4 +199,6 @@ public class RetryItem implements Serializable{
         result = 31 * result + (getMessage() != null ? getMessage().hashCode() : 0);
         return result;
     }
+
+
 }

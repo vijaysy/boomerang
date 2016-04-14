@@ -3,6 +3,7 @@ package com.vijaysy.boomerang.utils;
 import com.vijaysy.boomerang.enums.HttpMethod;
 import com.vijaysy.boomerang.models.RetryItem;
 
+import javax.ws.rs.core.MultivaluedHashMap;
 import java.util.Arrays;
 
 /**
@@ -10,6 +11,7 @@ import java.util.Arrays;
  */
 public final class RetryItemBuilder {
     private RetryItem retryItem;
+    private MultivaluedHashMap multivaluedHashMap = new MultivaluedHashMap();
 
     private RetryItemBuilder(){
         retryItem = new RetryItem();
@@ -59,10 +61,16 @@ public final class RetryItemBuilder {
         return this;
     }
 
+    public RetryItemBuilder withHeader(String name , String value){
+        this.multivaluedHashMap.putSingle(name,value);
+        return this;
+    }
+
     public RetryItem build(){
+        this.retryItem.setHeaders(this.multivaluedHashMap);
         return this.retryItem;
     }
 
-    // TODO: 04/04/16  addHeader() not addHeaders()
+
 
 }

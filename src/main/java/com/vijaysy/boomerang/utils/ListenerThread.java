@@ -3,6 +3,7 @@ package com.vijaysy.boomerang.utils;
 import com.vijaysy.boomerang.core.Cache;
 import com.vijaysy.boomerang.dao.RetryItemListenerDAO;
 import com.vijaysy.boomerang.models.RetryItem;
+import com.vijaysy.boomerang.services.IngestionService;
 import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
@@ -16,19 +17,21 @@ import java.util.Objects;
 
 @Slf4j
 public class ListenerThread implements Runnable {
-    private String channel;
-    private Jedis jedis ;
-    private Cache cache;
+    private final String channel;
+    private final Jedis jedis ;
+    private final Cache cache;
     private final RetryItemListenerDAO retryItemListenerDAO;
     private final JerseyClient jerseyClient;
+    private final IngestionService ingestionService;
 
 
 
-    public ListenerThread(Cache cache , String channel, RetryItemListenerDAO retryItemDAO, JerseyClient jerseyClient){
+    public ListenerThread(Cache cache , String channel, RetryItemListenerDAO retryItemDAO, JerseyClient jerseyClient,IngestionService ingestionService){
         this.cache=cache;
         this.channel="__key*__:"+channel+".*";
         this.retryItemListenerDAO =retryItemDAO;
         this.jerseyClient=jerseyClient;
+        this.ingestionService=ingestionService;
         this.jedis=cache.getJedisResource();
     }
 
@@ -51,7 +54,22 @@ public class ListenerThread implements Runnable {
                     RetryItem retryItem = retryItemListenerDAO.get(messageId);
                     jedis.expire(messageId,20);
                     if(Objects.isNull(retryItem)) return;
+                    if(retryItem.getNextRetry()<retryItem.getMaxRetry()) {
+                        Response response = jerseyClient.execute(retryItem);
+                        if(response.getStatus()==retryItem.getRetryStatusCode())
+                            try {
+                                retryItemListenerDAO.saveOrUpdate(retryItem);
+                                ingestionService.process(retryItem);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        else
+                            jerseyClient.executeFallBack(retryItem);
+
+                    }
+
                     Response f = (retryItem.getNextRetry()!=retryItem.getMaxRetry())? jerseyClient.execute(retryItem): jerseyClient.executeFallBack(retryItem);
+
                     //TODO: handle failed executeFallBack method
                 }
             }

@@ -5,6 +5,7 @@ import com.vijaysy.boomerang.enums.HttpMethod;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.ws.rs.core.MultivaluedMap;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
@@ -79,6 +80,9 @@ public class RetryItem implements Serializable{
     @Column(name = "retry_status_code")
     int retryStatusCode;
 
+    @Column(name = "headers")
+    MultivaluedMap<String, Object> headers;
+
 
     public int getId() {
         return id;
@@ -124,6 +128,10 @@ public class RetryItem implements Serializable{
         return retryStatusCode;
     }
 
+    public MultivaluedMap<String, Object> getHeaders() {
+        return headers;
+    }
+
     public void setFallbackHttpUri(String fHttpUri) {
         this.fallbackHttpUri = fHttpUri;
     }
@@ -166,6 +174,10 @@ public class RetryItem implements Serializable{
 
     public void setRetryStatusCode(int retryStatusCode) {
         this.retryStatusCode = retryStatusCode;
+    }
+
+    public void setHeaders(MultivaluedMap<String, Object> headers) {
+        this.headers = headers;
     }
 
     @Override

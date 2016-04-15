@@ -1,6 +1,7 @@
 package com.vijaysy.boomerang.utils;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.vijaysy.boomerang.models.RetryItem;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 
 /**
@@ -15,23 +17,25 @@ import javax.ws.rs.core.Response;
  */
 @Slf4j
 public class JerseyClient {
-    private Client client;
-    private Response response;
+    private final Client client;
+    private  Response response;
+    private final ObjectMapper objectMapper;
 
     @Inject
-    public JerseyClient(Client client){
+    public JerseyClient(Client client, ObjectMapper objectMapper){
         this.client= client;
+        this.objectMapper=objectMapper;
     }
 
-    public Response execute(RetryItem retryItem) {
+    public Response execute(RetryItem retryItem) throws Exception{
         WebTarget webTarget = client.target(retryItem.getHttpUri());
         log.info("Making retry call for messageId:"+retryItem.getMessageId());
         switch (retryItem.getHttpMethod()){
-            case POST: response=webTarget.request().buildPost(Entity.json(retryItem.getMessage())).invoke();
+            case POST: response=webTarget.request().headers(objectMapper.readValue(retryItem.getHeaders(), MultivaluedHashMap.class)).buildPost(Entity.json(retryItem.getMessage())).invoke();
                 break;
-            case GET: response=webTarget.request().buildGet().invoke();
+            case GET: response=webTarget.request().headers(objectMapper.readValue(retryItem.getHeaders(), MultivaluedHashMap.class)).buildGet().invoke();
                 break;
-            case PUT: response=webTarget.request().buildPut(Entity.json(retryItem.getMessage())).invoke();
+            case PUT: response=webTarget.request().headers(objectMapper.readValue(retryItem.getHeaders(), MultivaluedHashMap.class)).buildPut(Entity.json(retryItem.getMessage())).invoke();
                 break;
             default: return Response.status(Response.Status.BAD_REQUEST).build();
         }
@@ -45,6 +49,9 @@ public class JerseyClient {
         response=webTarget.request().buildPut(Entity.text("")).invoke();
         return response;
     }
+
+
+
 
 
 }

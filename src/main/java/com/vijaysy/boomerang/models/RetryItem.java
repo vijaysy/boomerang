@@ -5,7 +5,6 @@ import com.vijaysy.boomerang.enums.HttpMethod;
 import lombok.ToString;
 
 import javax.persistence.*;
-import javax.ws.rs.core.MultivaluedMap;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
@@ -25,7 +24,7 @@ public class RetryItem implements Serializable{
 
     public RetryItem(){}
 
-    public RetryItem(String messageId, String message , HttpMethod httpMethod, String httpUri, int nextRetry, Integer[] retryPattern,String fHttpUri,HttpMethod fHttpMethod, String channel){
+    public RetryItem(String messageId, String message , HttpMethod httpMethod, String httpUri, int nextRetry, Integer[] retryPattern,String fHttpUri, String channel,String headers){
         this.messageId=messageId;
         this.message=message;
         this.httpMethod=httpMethod;
@@ -35,6 +34,7 @@ public class RetryItem implements Serializable{
         setMaxRetry(retryPattern.length);
         this.fallbackHttpUri =fHttpUri;
         this.channel=channel;
+        this.headers=headers;
 
     }
 
@@ -81,7 +81,7 @@ public class RetryItem implements Serializable{
     int retryStatusCode;
 
     @Column(name = "headers")
-    MultivaluedMap<String, Object> headers;
+    private String headers;
 
 
     public int getId() {
@@ -128,7 +128,7 @@ public class RetryItem implements Serializable{
         return retryStatusCode;
     }
 
-    public MultivaluedMap<String, Object> getHeaders() {
+    public String getHeaders() {
         return headers;
     }
 
@@ -176,7 +176,7 @@ public class RetryItem implements Serializable{
         this.retryStatusCode = retryStatusCode;
     }
 
-    public void setHeaders(MultivaluedMap<String, Object> headers) {
+    public void setHeaders(String headers) {
         this.headers = headers;
     }
 

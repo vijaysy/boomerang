@@ -1,7 +1,10 @@
 package com.vijaysy.boomerang.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vijaysy.boomerang.enums.HttpMethod;
 import com.vijaysy.boomerang.models.RetryItem;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.core.MultivaluedHashMap;
 import java.util.Arrays;
@@ -9,6 +12,7 @@ import java.util.Arrays;
 /**
  * Created by vijaysy on 04/04/16.
  */
+@Slf4j
 public final class RetryItemBuilder {
     private RetryItem retryItem;
     private MultivaluedHashMap multivaluedHashMap = new MultivaluedHashMap();
@@ -67,7 +71,12 @@ public final class RetryItemBuilder {
     }
 
     public RetryItem build(){
-        this.retryItem.setHeaders(this.multivaluedHashMap);
+        final ObjectMapper mapper = new ObjectMapper();
+        try {
+            this.retryItem.setHeaders(mapper.writeValueAsString(this.multivaluedHashMap));
+        }catch (JsonProcessingException e){
+           log.error(e.toString());
+        }
         return this.retryItem;
     }
 

@@ -18,19 +18,20 @@ public class ListenerServiceImpl implements ListenerService {
     private final RetryItemListenerDAO retryItemListenerDAO;
     private final Cache cache;
     private final ExecutorService executorService;
+    private final IngestionService ingestionService;
 
     @Inject
-    public ListenerServiceImpl(JerseyClient jerseyClient, RetryItemListenerDAO retryItemListenerDAO, Cache cache, ExecutorService executorService){
+    public ListenerServiceImpl(JerseyClient jerseyClient, RetryItemListenerDAO retryItemListenerDAO, Cache cache, ExecutorService executorService,IngestionService ingestionService){
         this.cache=cache;
         this.retryItemListenerDAO=retryItemListenerDAO;
         this.jerseyClient=jerseyClient;
         this.executorService=executorService;
+        this.ingestionService=ingestionService;
 
     }
 
     @Override
     public void createListener(ThreadConfig threadConfig) {
-        new Thread(new ListenerThread(cache,threadConfig.getChannel(),retryItemListenerDAO,jerseyClient)).start();
-        //executorService.submit(new ListenerThread(jedis,threadConfig.getChannel(),retryItemDAO,jerseyClient));
+        executorService.submit(new ListenerThread(cache,threadConfig.getChannel(),retryItemListenerDAO,jerseyClient,ingestionService));
     }
 }

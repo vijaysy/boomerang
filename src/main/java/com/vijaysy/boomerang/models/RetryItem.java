@@ -24,7 +24,7 @@ public class RetryItem implements Serializable{
 
     public RetryItem(){}
 
-    public RetryItem(String messageId, String message , HttpMethod httpMethod, String httpUri, int nextRetry, Integer[] retryPattern,String fHttpUri, String channel,String headers){
+    public RetryItem(String messageId, String message , HttpMethod httpMethod, String httpUri, int nextRetry, Integer[] retryPattern,String fHttpUri, String channel,String headers,boolean needResponse){
         this.messageId=messageId;
         this.message=message;
         this.httpMethod=httpMethod;
@@ -35,6 +35,7 @@ public class RetryItem implements Serializable{
         this.fallbackHttpUri =fHttpUri;
         this.channel=channel;
         this.headers=headers;
+        this.needResponse=needResponse;
 
     }
 
@@ -82,6 +83,9 @@ public class RetryItem implements Serializable{
 
     @Column(name = "headers")
     private String headers;
+
+    @Column(name = "need_response")
+    private boolean needResponse;
 
 
     public int getId() {
@@ -132,6 +136,10 @@ public class RetryItem implements Serializable{
         return headers;
     }
 
+    public boolean getNeedResponse() {
+        return needResponse;
+    }
+
     public void setFallbackHttpUri(String fHttpUri) {
         this.fallbackHttpUri = fHttpUri;
     }
@@ -178,6 +186,10 @@ public class RetryItem implements Serializable{
 
     public void setHeaders(String headers) {
         this.headers = headers;
+    }
+
+    public void setNeedResponse(boolean needResponse) {
+        this.needResponse = needResponse;
     }
 
     @Override

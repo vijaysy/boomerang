@@ -18,40 +18,51 @@ import javax.ws.rs.core.Response;
 @Slf4j
 public class JerseyClient {
     private final Client client;
-    private  Response response;
+    private Response response;
     private final ObjectMapper objectMapper;
 
     @Inject
-    public JerseyClient(Client client, ObjectMapper objectMapper){
-        this.client= client;
-        this.objectMapper=objectMapper;
+    public JerseyClient(Client client, ObjectMapper objectMapper) {
+        this.client = client;
+        this.objectMapper = objectMapper;
     }
 
-    public Response execute(RetryItem retryItem) throws Exception{
+    public Response execute(RetryItem retryItem) {
         WebTarget webTarget = client.target(retryItem.getHttpUri());
-        log.info("Making retry call for messageId:"+retryItem.getMessageId());
-        switch (retryItem.getHttpMethod()){
-            case POST: response=webTarget.request().headers(objectMapper.readValue(retryItem.getHeaders(), MultivaluedHashMap.class)).buildPost(Entity.json(retryItem.getMessage())).invoke();
-                break;
-            case GET: response=webTarget.request().headers(objectMapper.readValue(retryItem.getHeaders(), MultivaluedHashMap.class)).buildGet().invoke();
-                break;
-            case PUT: response=webTarget.request().headers(objectMapper.readValue(retryItem.getHeaders(), MultivaluedHashMap.class)).buildPut(Entity.json(retryItem.getMessage())).invoke();
-                break;
-            default: return Response.status(Response.Status.BAD_REQUEST).build();
+        log.info("Making retry call for messageId:" + retryItem.getMessageId());
+        try {
+            switch (retryItem.getHttpMethod()) {
+                case POST:
+                    response = webTarget.request().headers(objectMapper.readValue(retryItem.getHeaders(), MultivaluedHashMap.class)).buildPost(Entity.json(retryItem.getMessage())).invoke();
+                    break;
+                case GET:
+                    response = webTarget.request().headers(objectMapper.readValue(retryItem.getHeaders(), MultivaluedHashMap.class)).buildGet().invoke();
+                    break;
+                case PUT:
+                    response = webTarget.request().headers(objectMapper.readValue(retryItem.getHeaders(), MultivaluedHashMap.class)).buildPut(Entity.json(retryItem.getMessage())).invoke();
+                    break;
+                default:
+                    return Response.status(Response.Status.BAD_REQUEST).build();
+            }
+        } catch (Exception e) {
+
         }
-        log.info("Response for retry call"+response.toString());
-      return response;
-
-    }
-
-    public Response executeFallBack(RetryItem retryItem){
-        WebTarget webTarget = client.target(retryItem.getFallbackHttpUri()+"/"+retryItem.getMessageId()+"/fallback");
-        response=webTarget.request().buildPut(Entity.text("")).invoke();
+        log.info("Response for retry call" + response.toString());
+        if(Response.Status.Family.SUCCESSFUL.equals(response.getStatus())&&retryItem.getNeedResponse())
+             executeSuccess(retryItem,response);
         return response;
+
     }
 
+    public Response executeFallBack(RetryItem retryItem) {
+        WebTarget webTarget = client.target(retryItem.getFallbackHttpUri() + "/" + retryItem.getMessageId() + "/fallback");
+        return webTarget.request().buildPut(Entity.text("")).invoke();
+    }
 
-
+    public Response executeSuccess(RetryItem retryItem,Response response){
+        WebTarget webTarget = client.target(retryItem.getFallbackHttpUri() + "/" + retryItem.getMessageId() + "/fallback");
+        return  webTarget.request().buildPut(Entity.json(response)).invoke();
+    }
 
 
 }

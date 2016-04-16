@@ -70,6 +70,11 @@ public final class RetryItemBuilder {
         return this;
     }
 
+    public RetryItemBuilder withResponse(boolean response){
+        this.retryItem.setNeedResponse(response);
+        return this;
+    }
+
     public RetryItem build(){
         final ObjectMapper mapper = new ObjectMapper();
         try {

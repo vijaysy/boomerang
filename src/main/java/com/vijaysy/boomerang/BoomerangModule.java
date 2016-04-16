@@ -7,13 +7,17 @@ import com.google.inject.Singleton;
 import com.vijaysy.boomerang.core.Cache;
 import com.vijaysy.boomerang.services.IngestionService;
 import com.vijaysy.boomerang.services.IngestionServiceImpl;
+import com.vijaysy.boomerang.services.ListenerService;
+import com.vijaysy.boomerang.services.ListenerServiceImpl;
 import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.setup.Environment;
 import org.hibernate.SessionFactory;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisSentinelPool;
 
-import java.util.concurrent.ExecutorService;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Created by vijaysy on 08/04/16.
@@ -30,6 +34,7 @@ public class BoomerangModule extends AbstractModule{
     protected void configure() {
         bind(Cache.class).in(Singleton.class);
         bind(IngestionService.class).to(IngestionServiceImpl.class).in(Singleton.class);
+        bind(ListenerService.class).to(ListenerServiceImpl.class).in(Singleton.class);
 
     }
 
@@ -47,11 +52,18 @@ public class BoomerangModule extends AbstractModule{
         return new JedisSentinelPool(boomerangConfiguration.getCacheConfig().getMaster(), Sets.newHashSet(boomerangConfiguration.getCacheConfig().getSentinels().split(",")), poolConfig, boomerangConfiguration.getCacheConfig().getTimeout(), boomerangConfiguration.getCacheConfig().getPassword(),boomerangConfiguration.getCacheConfig().getDb());
     }
 
+
     @Provides
     @Singleton
-    public ExecutorService getExecutorService(BoomerangConfiguration boomeranglistenerConfiguration, Environment environment){
-        return environment.lifecycle().executorService("RedisListeners-%d")
-                .maxThreads(boomeranglistenerConfiguration.getThreadPoolSize())
+    public ThreadPoolExecutor getThreadPoolExecutor(BoomerangConfiguration boomerangConfiguration,Environment environment){
+        return (ThreadPoolExecutor) environment.lifecycle().executorService("RedisListeners-%d")
+                .maxThreads(boomerangConfiguration.getThreadPoolSize())
                 .build();
+    }
+
+    @Provides
+    @Singleton
+    public Client getClient(){
+        return ClientBuilder.newClient();
     }
 }

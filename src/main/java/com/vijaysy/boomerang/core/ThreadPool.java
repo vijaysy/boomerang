@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import io.dropwizard.lifecycle.Managed;
 
 import javax.inject.Singleton;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Created by vijaysy on 10/04/16.
@@ -12,10 +12,10 @@ import java.util.concurrent.ExecutorService;
 @Singleton
 public class ThreadPool implements Managed {
 
-    private ExecutorService executorService;
+    private ThreadPoolExecutor executorService;
 
     @Inject
-    public ThreadPool(ExecutorService executorService){
+    public ThreadPool(ThreadPoolExecutor executorService){
         this.executorService=executorService;
     }
 

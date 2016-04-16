@@ -56,12 +56,12 @@ public class JerseyClient {
 
     public Response executeFallBack(RetryItem retryItem) {
         WebTarget webTarget = client.target(retryItem.getFallbackHttpUri() + "/" + retryItem.getMessageId() + "/fallback");
-        return webTarget.request().buildPut(Entity.text("")).invoke();
+        return webTarget.request().header("retry","false").buildPut(Entity.text("")).invoke();
     }
 
     public Response executeSuccess(RetryItem retryItem,Response response){
         WebTarget webTarget = client.target(retryItem.getFallbackHttpUri() + "/" + retryItem.getMessageId() + "/fallback");
-        return  webTarget.request().buildPut(Entity.json(response)).invoke();
+        return  webTarget.request().header("retry","true").buildPut(Entity.json(response)).invoke();
     }
 
 

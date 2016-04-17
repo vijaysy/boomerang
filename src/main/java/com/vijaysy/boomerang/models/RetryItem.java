@@ -1,10 +1,14 @@
 package com.vijaysy.boomerang.models;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.istack.internal.NotNull;
 import com.vijaysy.boomerang.enums.HttpMethod;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
+import javax.ws.rs.core.MultivaluedHashMap;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
@@ -12,6 +16,7 @@ import java.util.Objects;
 /**
  * Created by vijaysy on 01/04/16.
  */
+@Slf4j
 @Entity
 @ToString
 @Table(name="retry_item",indexes ={
@@ -19,23 +24,23 @@ import java.util.Objects;
 })
 public class RetryItem implements Serializable{
 
-    //TODO: need to add headers,timestamps
-    // TODO: 04/04/16  use primitive datatypes
+    //TODO:timestamps
 
     public RetryItem(){}
 
-    public RetryItem(String messageId, String message , HttpMethod httpMethod, String httpUri, int nextRetry, Integer[] retryPattern,String fHttpUri, String channel,String headers,boolean needResponse){
+    public RetryItem(String messageId, String message , HttpMethod httpMethod, String httpUri, int nextRetry, int[] retryPattern,String fHttpUri, String channel,String headers,boolean needResponse,int retryStatusCode){
         this.messageId=messageId;
         this.message=message;
         this.httpMethod=httpMethod;
         this.httpUri=httpUri;
         this.nextRetry=nextRetry;
-        setRetryPattern(Arrays.toString(retryPattern).replaceAll("\\[|\\]||\\s", "").replace(" ",""));
-        setMaxRetry(retryPattern.length);
+        this.retryPattern=Arrays.toString(retryPattern).replaceAll("\\[|\\]||\\s", "").replace(" ","");
+        this.maxRetry=retryPattern.length;
         this.fallbackHttpUri =fHttpUri;
         this.channel=channel;
         this.headers=headers;
         this.needResponse=needResponse;
+        this.retryStatusCode=retryStatusCode;
 
     }
 
@@ -70,16 +75,12 @@ public class RetryItem implements Serializable{
     @NotNull
     private String channel;
 
-    //Post max retry
-    // TODO: 04/04/16  do we really need fallback api ?? Can we hit retry api with some flag ??
-
     @Column(name = "fallback_http_uri")
     private String fallbackHttpUri;
 
-    //retry config
 
     @Column(name = "retry_status_code")
-    int retryStatusCode;
+    private int retryStatusCode;
 
     @Column(name = "headers")
     private String headers;
@@ -140,56 +141,8 @@ public class RetryItem implements Serializable{
         return needResponse;
     }
 
-    public void setFallbackHttpUri(String fHttpUri) {
-        this.fallbackHttpUri = fHttpUri;
-    }
-
-    public void setMaxRetry(int maxRetry) {
-        this.maxRetry = maxRetry;
-    }
-
-    public void setRetryPattern(String retryPattern) {
-        this.retryPattern = retryPattern;
-    }
-
     public void setNextRetry(int nextRetry) {
         this.nextRetry = nextRetry;
-    }
-
-    public void setHttpUri(String httpUri) {
-        this.httpUri = httpUri;
-    }
-
-    public void setHttpMethod(HttpMethod httpMethod) {
-        this.httpMethod = httpMethod;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setMessageId(String messageId) {
-        this.messageId = messageId;
-    }
-
-    public void setChannel(String channel) {
-        this.channel = channel;
-    }
-
-    public void setRetryStatusCode(int retryStatusCode) {
-        this.retryStatusCode = retryStatusCode;
-    }
-
-    public void setHeaders(String headers) {
-        this.headers = headers;
-    }
-
-    public void setNeedResponse(boolean needResponse) {
-        this.needResponse = needResponse;
     }
 
     @Override
@@ -213,6 +166,85 @@ public class RetryItem implements Serializable{
     }
 
 
+    public static class RetryItemBuilder {
+        private String messageId;
+        private String message;
+        private HttpMethod httpMethod;
+        private String httpUri;
+        private int nextRetry;
+        private int [] retryPattern;
+        private String channel;
+        private String fallbackHttpUri;
+        private int retryStatusCode;
+        private String headers;
+        private boolean needResponse;
+        private MultivaluedHashMap multivaluedHashMap = new MultivaluedHashMap();
 
+
+        public RetryItemBuilder withMessageId(String messageId) {
+            this.messageId = messageId;
+            return this;
+        }
+
+        public RetryItemBuilder withMessage(String message) {
+            this.message = message;
+            return this;
+        }
+
+        public RetryItemBuilder withHttpMethod(HttpMethod httpMethod) {
+            this.httpMethod = httpMethod;
+            return this;
+        }
+
+        public RetryItemBuilder withHttpUri(String httpUri) {
+            this.httpUri = httpUri;
+            return this;
+        }
+
+        public RetryItemBuilder withNextRetry(int nextRetry) {
+            this.nextRetry = nextRetry;
+            return this;
+        }
+
+        public RetryItemBuilder withRetryPattern(int[] retryPattern) {
+            this.retryPattern = retryPattern;
+            return this;
+        }
+
+        public RetryItemBuilder withFallbackHttpUri(String fallbackHttpUri) {
+            this.fallbackHttpUri = fallbackHttpUri;
+            return this;
+        }
+
+        public RetryItemBuilder withChannel(String channel) {
+            this.channel = channel;
+            return this;
+        }
+
+        public RetryItemBuilder withHeaders(String name , String value) {
+            this.multivaluedHashMap.putSingle(name,value);
+            return this;
+        }
+
+        public RetryItemBuilder withRetryStatusCode(int retryStatusCode){
+            this.retryStatusCode=retryStatusCode;
+            return this;
+        }
+
+        public RetryItemBuilder withNeedResponse(boolean needResponse) {
+            this.needResponse = needResponse;
+            return this;
+        }
+
+        public RetryItem createRetryItem() {
+            final ObjectMapper objectMapper=new ObjectMapper();
+            try {
+                headers=objectMapper.writeValueAsString(multivaluedHashMap);
+            }catch (JsonProcessingException e){
+                log.error(e.toString());
+            }
+            return new RetryItem(messageId, message, httpMethod, httpUri, nextRetry, retryPattern, fallbackHttpUri, channel, headers, needResponse,retryStatusCode);
+        }
+    }
 
 }

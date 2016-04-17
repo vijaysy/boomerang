@@ -178,7 +178,7 @@ public class RetryItem implements Serializable{
         private int retryStatusCode;
         private String headers;
         private boolean needResponse;
-        private MultivaluedHashMap multivaluedHashMap = new MultivaluedHashMap();
+        private MultivaluedHashMap<String, String> multivaluedHashMap = new MultivaluedHashMap<String, String>();
 
 
         public RetryItemBuilder withMessageId(String messageId) {

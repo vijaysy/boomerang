@@ -26,7 +26,7 @@ public class ListenerThread implements Runnable {
 
 
 
-    public ListenerThread(Cache cache , String channel, RetryItemListenerDAO retryItemDAO, JerseyClient jerseyClient,IngestionService ingestionService){
+    public ListenerThread(Cache cache , String channel, RetryItemListenerDAO retryItemDAO, JerseyClient jerseyClient, IngestionService ingestionService){
         this.cache=cache;
         this.channel="__key*__:"+channel+".*";
         this.retryItemListenerDAO =retryItemDAO;
@@ -56,6 +56,7 @@ public class ListenerThread implements Runnable {
                     if(Objects.isNull(retryItem)) return;
                     if(retryItem.getNextRetry()<retryItem.getMaxRetry()) {
                         Response response = jerseyClient.execute(retryItem);
+                        if(Objects.isNull(response)) return;
                         if(response.getStatus()==retryItem.getRetryStatusCode())
                             try {
                                 retryItemListenerDAO.saveOrUpdate(retryItem);

@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.vijaysy.boomerang.core.Cache;
 import com.vijaysy.boomerang.dao.RetryItemListenerDAO;
 import com.vijaysy.boomerang.models.Config.ThreadConfig;
-import com.vijaysy.boomerang.utils.JerseyClient;
+import com.vijaysy.boomerang.utils.JerseyClientImpl;
 import com.vijaysy.boomerang.utils.ListenerThread;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,14 +18,14 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Singleton
 public class ListenerServiceImpl implements ListenerService {
 
-    private final JerseyClient jerseyClient;
+    private final JerseyClientImpl jerseyClient;
     private final RetryItemListenerDAO retryItemListenerDAO;
     private final Cache cache;
     private final IngestionService ingestionService;
     private final ThreadPoolExecutor threadPoolExecutor;
 
     @Inject
-    public ListenerServiceImpl(JerseyClient jerseyClient, RetryItemListenerDAO retryItemListenerDAO, Cache cache,IngestionService ingestionService,ThreadPoolExecutor threadPoolExecutor){
+    public ListenerServiceImpl(JerseyClientImpl jerseyClient, RetryItemListenerDAO retryItemListenerDAO, Cache cache, IngestionService ingestionService, ThreadPoolExecutor threadPoolExecutor){
         this.cache=cache;
         this.retryItemListenerDAO=retryItemListenerDAO;
         this.jerseyClient=jerseyClient;

@@ -9,6 +9,8 @@ import com.vijaysy.boomerang.services.IngestionService;
 import com.vijaysy.boomerang.services.IngestionServiceImpl;
 import com.vijaysy.boomerang.services.ListenerService;
 import com.vijaysy.boomerang.services.ListenerServiceImpl;
+import com.vijaysy.boomerang.utils.JerseyClient;
+import com.vijaysy.boomerang.utils.JerseyClientImpl;
 import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.setup.Environment;
 import org.hibernate.SessionFactory;
@@ -35,6 +37,7 @@ public class BoomerangModule extends AbstractModule{
         bind(Cache.class).in(Singleton.class);
         bind(IngestionService.class).to(IngestionServiceImpl.class).in(Singleton.class);
         bind(ListenerService.class).to(ListenerServiceImpl.class).in(Singleton.class);
+        bind(JerseyClient.class).to(JerseyClientImpl.class).in(Singleton.class);
 
     }
 

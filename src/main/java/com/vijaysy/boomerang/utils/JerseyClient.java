@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 
 /**
@@ -33,19 +32,20 @@ public class JerseyClient {
         try {
             switch (retryItem.getHttpMethod()) {
                 case POST:
-                    response = webTarget.request().headers(objectMapper.readValue(retryItem.getHeaders(), MultivaluedHashMap.class)).buildPost(Entity.json(retryItem.getMessage())).invoke();
+                    response = webTarget.request().buildPost(Entity.json(retryItem.getMessage())).invoke();
                     break;
                 case GET:
-                    response = webTarget.request().headers(objectMapper.readValue(retryItem.getHeaders(), MultivaluedHashMap.class)).buildGet().invoke();
+                    response = webTarget.request().buildGet().invoke();
                     break;
                 case PUT:
-                    response = webTarget.request().headers(objectMapper.readValue(retryItem.getHeaders(), MultivaluedHashMap.class)).buildPut(Entity.json(retryItem.getMessage())).invoke();
+                    response = webTarget.request().buildPut(Entity.json(retryItem.getMessage())).invoke();
                     break;
                 default:
                     return Response.status(Response.Status.BAD_REQUEST).build();
             }
         } catch (Exception e) {
-
+            log.info("Exception while making call for messageID "+retryItem.getMessageId() +e.toString());
+            return null;
         }
         log.info("Response for retry call" + response.toString());
         if(Response.Status.Family.SUCCESSFUL.equals(response.getStatus())&&retryItem.getNeedResponse())

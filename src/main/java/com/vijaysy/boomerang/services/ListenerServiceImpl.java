@@ -6,12 +6,16 @@ import com.vijaysy.boomerang.dao.RetryItemListenerDAO;
 import com.vijaysy.boomerang.models.Config.ThreadConfig;
 import com.vijaysy.boomerang.utils.JerseyClient;
 import com.vijaysy.boomerang.utils.ListenerThread;
+import lombok.extern.slf4j.Slf4j;
 
+import javax.inject.Singleton;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Created by vijaysy on 11/04/16.
  */
+@Slf4j
+@Singleton
 public class ListenerServiceImpl implements ListenerService {
 
     private final JerseyClient jerseyClient;
@@ -32,7 +36,10 @@ public class ListenerServiceImpl implements ListenerService {
 
     @Override
     public void createListener(ThreadConfig threadConfig) {
-        threadPoolExecutor.execute(new ListenerThread(cache,threadConfig.getChannel(),retryItemListenerDAO,jerseyClient,ingestionService));
+        for (int i=0;i< threadConfig.getListenerCount();i++) {
+            log.info("Creating thread "+i+" of name "+threadConfig.getName());
+            threadPoolExecutor.execute(new ListenerThread(cache, threadConfig.getChannel(), retryItemListenerDAO, jerseyClient, ingestionService));
+        }
 
     }
 }

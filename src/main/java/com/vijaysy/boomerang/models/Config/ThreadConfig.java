@@ -15,5 +15,5 @@ import lombok.ToString;
 public class ThreadConfig {
     private String name;
     private String channel;
-    private Integer listenerCount;
+    private int listenerCount;
 }

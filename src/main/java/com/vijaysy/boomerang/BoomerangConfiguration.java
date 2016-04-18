@@ -1,7 +1,7 @@
 package com.vijaysy.boomerang;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.vijaysy.boomerang.models.Config.CacheConfig;
+import com.vijaysy.boomerang.models.config.CacheConfig;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 import lombok.Getter;

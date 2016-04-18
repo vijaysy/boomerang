@@ -1,9 +1,11 @@
-package com.vijaysy.boomerang.services;
+package com.vijaysy.boomerang.services.impl;
 
 import com.google.inject.Inject;
 import com.vijaysy.boomerang.core.Cache;
 import com.vijaysy.boomerang.dao.RetryItemListenerDAO;
-import com.vijaysy.boomerang.models.Config.ThreadConfig;
+import com.vijaysy.boomerang.models.config.ThreadConfig;
+import com.vijaysy.boomerang.services.IngestionService;
+import com.vijaysy.boomerang.services.ListenerService;
 import com.vijaysy.boomerang.utils.JerseyClientImpl;
 import com.vijaysy.boomerang.utils.ListenerThread;
 import lombok.extern.slf4j.Slf4j;

@@ -1,10 +1,11 @@
-package com.vijaysy.boomerang.services;
+package com.vijaysy.boomerang.services.impl;
 
 import com.google.inject.Inject;
 import com.vijaysy.boomerang.core.Cache;
 import com.vijaysy.boomerang.dao.RetryItemDAO;
 import com.vijaysy.boomerang.exception.RetryCountException;
 import com.vijaysy.boomerang.models.RetryItem;
+import com.vijaysy.boomerang.services.IngestionService;
 import redis.clients.jedis.Jedis;
 
 /**

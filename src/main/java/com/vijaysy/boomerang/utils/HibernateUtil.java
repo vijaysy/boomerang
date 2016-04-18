@@ -13,7 +13,6 @@ public class HibernateUtil {
     private static SessionFactory sessionFactory;
 
 
-
     public static Session getSession(SessionFactory sessionFactory){
         Session session = sessionFactory.openSession();
         return session;

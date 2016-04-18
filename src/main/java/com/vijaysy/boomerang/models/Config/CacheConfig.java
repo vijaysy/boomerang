@@ -1,4 +1,4 @@
-package com.vijaysy.boomerang.models.Config;
+package com.vijaysy.boomerang.models.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

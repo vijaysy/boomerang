@@ -1,6 +1,7 @@
 package com.vijaysy.boomerang.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.istack.internal.NotNull;
@@ -30,7 +31,7 @@ public class RetryItem implements Serializable{
 
     public RetryItem(){}
 
-    public RetryItem(String messageId, String message , HttpMethod httpMethod, String httpUri, int nextRetry, int[] retryPattern,String fHttpUri, String channel,String headers,boolean needResponse,int retryStatusCode){
+    public RetryItem(String messageId, String message , HttpMethod httpMethod, String httpUri, int nextRetry, int[] retryPattern,String fHttpUri, String channel,String headers,Boolean needResponse,int retryStatusCode){
         this.messageId=messageId;
         this.message=message;
         this.httpMethod=httpMethod;
@@ -52,45 +53,59 @@ public class RetryItem implements Serializable{
     @Column(name = "id",unique = true)
     private int id;
 
+    @JsonProperty
     @Column(name = "message_id",unique = true)
     @NotNull
     private String messageId;
 
+    @JsonProperty
     @Column(name = "message")
     private String message;
 
+    @JsonProperty
     @Enumerated(EnumType.STRING)
     @Column(name = "http_method")
     private HttpMethod httpMethod;
 
+    @JsonProperty
     @Column(name = "http_uri")
     private String httpUri;
 
+    @JsonProperty
     @Column(name = "retry_pattern")
     private String retryPattern;
 
+    @JsonProperty
     @Column(name = "next_retry")
     private int nextRetry;
 
+    @JsonProperty
     @Column(name = "max_retry")
     private int maxRetry;
 
-    @Column(name = "channel")
+    @JsonProperty
     @NotNull
+    @Column(name = "channel")
     private String channel;
 
+    @JsonProperty
+    @NotNull
     @Column(name = "fallback_http_uri")
     private String fallbackHttpUri;
 
-
+    @JsonProperty
+    @NotNull
     @Column(name = "retry_status_code")
     private int retryStatusCode;
 
+    @JsonProperty
     @Column(name = "headers")
     private String headers;
 
+    @JsonProperty
+    @NotNull
     @Column(name = "need_response")
-    private boolean needResponse;
+    private Boolean needResponse;
 
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
@@ -152,7 +167,7 @@ public class RetryItem implements Serializable{
         return headers;
     }
 
-    public boolean getNeedResponse() {
+    public Boolean getNeedResponse() {
         return needResponse;
     }
 
@@ -192,7 +207,7 @@ public class RetryItem implements Serializable{
         private String fallbackHttpUri;
         private int retryStatusCode;
         private String headers;
-        private boolean needResponse;
+        private Boolean needResponse;
         private MultivaluedHashMap<String, String> multivaluedHashMap = new MultivaluedHashMap<String, String>();
 
 
@@ -246,7 +261,7 @@ public class RetryItem implements Serializable{
             return this;
         }
 
-        public RetryItemBuilder withNeedResponse(boolean needResponse) {
+        public RetryItemBuilder withNeedResponse(Boolean needResponse) {
             this.needResponse = needResponse;
             return this;
         }

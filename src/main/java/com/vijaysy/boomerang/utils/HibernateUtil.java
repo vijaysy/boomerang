@@ -10,8 +10,6 @@ import java.util.Objects;
  * Created by vijaysy on 11/04/16.
  */
 public class HibernateUtil {
-    private static SessionFactory sessionFactory;
-
 
     public static Session getSession(SessionFactory sessionFactory){
         Session session = sessionFactory.openSession();

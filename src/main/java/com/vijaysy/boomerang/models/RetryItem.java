@@ -1,11 +1,14 @@
 package com.vijaysy.boomerang.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.istack.internal.NotNull;
 import com.vijaysy.boomerang.enums.HttpMethod;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.ws.rs.core.MultivaluedHashMap;
@@ -25,8 +28,6 @@ import java.util.Objects;
 })
 public class RetryItem implements Serializable{
 
-    //TODO:timestamps
-
     public RetryItem(){}
 
     public RetryItem(String messageId, String message , HttpMethod httpMethod, String httpUri, int nextRetry, int[] retryPattern,String fHttpUri, String channel,String headers,boolean needResponse,int retryStatusCode){
@@ -45,6 +46,7 @@ public class RetryItem implements Serializable{
 
     }
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id",unique = true)
@@ -57,6 +59,7 @@ public class RetryItem implements Serializable{
     @Column(name = "message")
     private String message;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "http_method")
     private HttpMethod httpMethod;
 
@@ -91,10 +94,12 @@ public class RetryItem implements Serializable{
 
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
     public Date createdAt;
 
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
     public Date updatedAt;
 
 

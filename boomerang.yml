@@ -53,7 +53,7 @@ database:
   properties:
     charSet: UTF-8
     hibernate.dialect: org.hibernate.dialect.MySQLDialect
-    hibernate.hbm2ddl.auto: update
+    hibernate.hbm2ddl.auto: create
     hibernate.show_sql: true
   maxWaitForConnection: 1s
   validationQuery: "/* MyApplication Health Check */ SELECT 1"
@@ -64,5 +64,4 @@ database:
   checkConnectionOnBorrow: true
   evictionInterval: 10s
   minIdleTime: 1 minute
-  defaultTransactionIsolation: READ_COMMITTED
 

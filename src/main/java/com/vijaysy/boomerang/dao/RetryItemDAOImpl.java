@@ -46,6 +46,21 @@ public class RetryItemDaoImpl extends AbstractDAO<RetryItemDaoImpl> implements R
         Session session = HibernateUtil.getSessionWithTransaction(sessionFactory);
         try {
             session.saveOrUpdate(retryItem);
+            HibernateUtil.commitTransaction(session);
+        }catch (Exception e){
+            HibernateUtil.rollbackTransaction(session);
+            throw e;
+        }finally {
+            HibernateUtil.closeSession(session);
+        }
+    }
+
+    @Override
+    public void save(RetryItem retryItem){
+        Session session = HibernateUtil.getSessionWithTransaction(sessionFactory);
+        try {
+            session.save(retryItem);
+            HibernateUtil.commitTransaction(session);
         }catch (Exception e){
             HibernateUtil.rollbackTransaction(session);
             throw e;

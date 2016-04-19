@@ -30,7 +30,7 @@ public class IngestionServiceImpl implements IngestionService {
         String key = retryItem.getChannel()+"."+retryItem.getMessageId();
         retryItem.setNextRetry(retryItem.getNextRetry()+1);
         jedis.setex(key,timeout,key);
-        retryItemDao.saveOrUpdate(retryItem);
+        retryItemDao.save(retryItem);
 
     }
 

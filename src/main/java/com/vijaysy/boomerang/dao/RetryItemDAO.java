@@ -8,4 +8,5 @@ import com.vijaysy.boomerang.models.RetryItem;
 public interface RetryItemDao {
     RetryItem get(String messageId);
     void saveOrUpdate(RetryItem retryItem);
+    void save(RetryItem retryItem);
 }

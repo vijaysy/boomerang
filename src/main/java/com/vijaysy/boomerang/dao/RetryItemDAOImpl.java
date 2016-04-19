@@ -12,7 +12,7 @@ import org.hibernate.criterion.Restrictions;
 /**
  * Created by vijaysy on 08/04/16.
  */
-public class RetryItemListenerDAO extends AbstractDAO<RetryItemListenerDAO> {
+public class RetryItemDaoImpl extends AbstractDAO<RetryItemDaoImpl> implements RetryItemDao {
     /**
      * Creates a new DAO with a given session provider.
      *
@@ -20,11 +20,12 @@ public class RetryItemListenerDAO extends AbstractDAO<RetryItemListenerDAO> {
      */
     private SessionFactory sessionFactory;
     @Inject
-    public RetryItemListenerDAO(SessionFactory sessionFactory) {
+    public RetryItemDaoImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
         this.sessionFactory=sessionFactory;
     }
 
+    @Override
     public RetryItem get(String messageId){
         Session session = HibernateUtil.getSession(sessionFactory);
         try {
@@ -40,18 +41,16 @@ public class RetryItemListenerDAO extends AbstractDAO<RetryItemListenerDAO> {
     }
 
 
+    @Override
     public void saveOrUpdate(RetryItem retryItem){
         Session session = HibernateUtil.getSessionWithTransaction(sessionFactory);
         try {
             session.saveOrUpdate(retryItem);
-
         }catch (Exception e){
             HibernateUtil.rollbackTransaction(session);
             throw e;
-
         }finally {
             HibernateUtil.closeSession(session);
         }
-
     }
 }

@@ -6,7 +6,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.vijaysy.boomerang.models.RetryItem;
 import com.vijaysy.boomerang.services.IngestionService;
-import io.dropwizard.hibernate.UnitOfWork;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.Consumes;
@@ -35,7 +34,6 @@ public class Reappear {
     @ExceptionMetered
     @Timed
     @Path("reappear")
-    @UnitOfWork
     public void doReappear(RetryItem retryItem)throws Exception{
         log.info("Retry Item received: "+retryItem);
         ingestionService.process(retryItem);

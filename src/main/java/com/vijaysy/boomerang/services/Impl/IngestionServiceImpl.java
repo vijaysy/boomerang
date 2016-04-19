@@ -2,7 +2,7 @@ package com.vijaysy.boomerang.services.impl;
 
 import com.google.inject.Inject;
 import com.vijaysy.boomerang.core.Cache;
-import com.vijaysy.boomerang.dao.RetryItemDAO;
+import com.vijaysy.boomerang.dao.RetryItemDao;
 import com.vijaysy.boomerang.exception.RetryCountException;
 import com.vijaysy.boomerang.models.RetryItem;
 import com.vijaysy.boomerang.services.IngestionService;
@@ -14,12 +14,12 @@ import redis.clients.jedis.Jedis;
 public class IngestionServiceImpl implements IngestionService {
 
     private Jedis jedis;
-    private RetryItemDAO retryItemDAO;
+    private RetryItemDao retryItemDao;
 
     @Inject
-    IngestionServiceImpl(Cache cache, RetryItemDAO retryItemDAO){
+    IngestionServiceImpl(Cache cache, RetryItemDao retryItemDao){
         this.jedis=cache.getJedisResource();
-        this.retryItemDAO=retryItemDAO;
+        this.retryItemDao = retryItemDao;
 
     }
     @Override
@@ -30,7 +30,7 @@ public class IngestionServiceImpl implements IngestionService {
         String key = retryItem.getChannel()+"."+retryItem.getMessageId();
         retryItem.setNextRetry(retryItem.getNextRetry()+1);
         jedis.setex(key,timeout,key);
-        retryItemDAO.saveOrUpdate(retryItem);
+        retryItemDao.saveOrUpdate(retryItem);
 
     }
 }

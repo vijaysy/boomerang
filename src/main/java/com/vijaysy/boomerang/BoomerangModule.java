@@ -5,6 +5,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.vijaysy.boomerang.core.Cache;
+import com.vijaysy.boomerang.dao.RetryItemDao;
+import com.vijaysy.boomerang.dao.RetryItemDaoImpl;
 import com.vijaysy.boomerang.services.IngestionService;
 import com.vijaysy.boomerang.services.impl.IngestionServiceImpl;
 import com.vijaysy.boomerang.services.ListenerService;
@@ -38,6 +40,7 @@ public class BoomerangModule extends AbstractModule{
         bind(IngestionService.class).to(IngestionServiceImpl.class).in(Singleton.class);
         bind(ListenerService.class).to(ListenerServiceImpl.class).in(Singleton.class);
         bind(JerseyClient.class).to(JerseyClientImpl.class).in(Singleton.class);
+        bind(RetryItemDao.class).to(RetryItemDaoImpl.class).in(Singleton.class);
 
     }
 

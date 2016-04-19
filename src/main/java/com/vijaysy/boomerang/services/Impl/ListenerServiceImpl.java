@@ -2,7 +2,7 @@ package com.vijaysy.boomerang.services.impl;
 
 import com.google.inject.Inject;
 import com.vijaysy.boomerang.core.Cache;
-import com.vijaysy.boomerang.dao.RetryItemListenerDAO;
+import com.vijaysy.boomerang.dao.RetryItemDao;
 import com.vijaysy.boomerang.models.config.ThreadConfig;
 import com.vijaysy.boomerang.services.IngestionService;
 import com.vijaysy.boomerang.services.ListenerService;
@@ -21,15 +21,15 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class ListenerServiceImpl implements ListenerService {
 
     private final JerseyClientImpl jerseyClient;
-    private final RetryItemListenerDAO retryItemListenerDAO;
+    private final RetryItemDao retryItemDao;
     private final Cache cache;
     private final IngestionService ingestionService;
     private final ThreadPoolExecutor threadPoolExecutor;
 
     @Inject
-    public ListenerServiceImpl(JerseyClientImpl jerseyClient, RetryItemListenerDAO retryItemListenerDAO, Cache cache, IngestionService ingestionService, ThreadPoolExecutor threadPoolExecutor){
+    public ListenerServiceImpl(JerseyClientImpl jerseyClient, RetryItemDao retryItemDao, Cache cache, IngestionService ingestionService, ThreadPoolExecutor threadPoolExecutor){
         this.cache=cache;
-        this.retryItemListenerDAO=retryItemListenerDAO;
+        this.retryItemDao = retryItemDao;
         this.jerseyClient=jerseyClient;
         this.ingestionService=ingestionService;
         this.threadPoolExecutor=threadPoolExecutor;
@@ -40,7 +40,7 @@ public class ListenerServiceImpl implements ListenerService {
     public void createListener(ThreadConfig threadConfig) {
         for (int i=0;i< threadConfig.getListenerCount();i++) {
             log.info("Creating thread "+i+" of name "+threadConfig.getName());
-            threadPoolExecutor.execute(new ListenerThread(cache, threadConfig.getChannel(), retryItemListenerDAO, jerseyClient, ingestionService));
+            threadPoolExecutor.execute(new ListenerThread(cache, threadConfig.getChannel(), retryItemDao, jerseyClient, ingestionService));
         }
 
     }

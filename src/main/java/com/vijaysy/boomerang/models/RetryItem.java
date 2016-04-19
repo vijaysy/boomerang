@@ -24,9 +24,6 @@ import java.util.Objects;
 @Slf4j
 @Entity
 @ToString
-@Table(name="retry_item",indexes ={
-        @Index(columnList = "message_id", name = "message_id")
-})
 public class RetryItem implements Serializable{
 
     public RetryItem(){}

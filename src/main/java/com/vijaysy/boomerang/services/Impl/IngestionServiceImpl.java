@@ -33,4 +33,9 @@ public class IngestionServiceImpl implements IngestionService {
         retryItemDao.saveOrUpdate(retryItem);
 
     }
+
+    @Override
+    public RetryItem getRetryItem(String messageId) {
+        return retryItemDao.get(messageId);
+    }
 }

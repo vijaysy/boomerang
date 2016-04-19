@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.ws.rs.core.MultivaluedHashMap;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -87,6 +88,15 @@ public class RetryItem implements Serializable{
 
     @Column(name = "need_response")
     private boolean needResponse;
+
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date createdAt;
+
+    @Column(name = "updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date updatedAt;
+
 
 
     public int getId() {

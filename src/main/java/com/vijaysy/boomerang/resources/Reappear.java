@@ -8,10 +8,7 @@ import com.vijaysy.boomerang.models.RetryItem;
 import com.vijaysy.boomerang.services.IngestionService;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -30,6 +27,7 @@ public class Reappear {
     public Reappear(IngestionService ingestionService){
         this.ingestionService=ingestionService;
     }
+
     @POST()
     @ExceptionMetered
     @Timed
@@ -38,5 +36,13 @@ public class Reappear {
         log.info("Retry Item received: "+retryItem);
         ingestionService.process(retryItem);
 
+    }
+
+    @GET
+    @ExceptionMetered
+    @Timed
+    @Path("get")
+    public RetryItem getRetryItem(@QueryParam("messageId") String messageId){
+        return  ingestionService.getRetryItem(messageId);
     }
 }

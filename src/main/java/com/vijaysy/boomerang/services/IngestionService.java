@@ -7,4 +7,5 @@ import com.vijaysy.boomerang.models.RetryItem;
  */
 public interface IngestionService {
     void process(RetryItem retryItem) throws Exception;
+    RetryItem getRetryItem(String messageId);
 }

@@ -42,7 +42,7 @@ logging:
       archivedLogFilenamePattern: ./logs/boomerang-%d{yyyy-MM-dd-HH}.log.gz
       archivedFileCount: 20
       timeZone: IST
-      logFormat: "%highlight(%-5level) [%date] [%thread] [%X{X-Flipkart-Client}] [%cyan(%logger{0})]: %message%n"
+      logFormat: "%highlight(%-5level) [%date] [%thread] [%X{X-Flipkart-ManagedClient}] [%cyan(%logger{0})]: %message%n"
     - type: console
 
 database:
@@ -53,7 +53,7 @@ database:
   properties:
     charSet: UTF-8
     hibernate.dialect: org.hibernate.dialect.MySQLDialect
-    hibernate.hbm2ddl.auto: create
+    hibernate.hbm2ddl.auto: update
     hibernate.show_sql: true
   maxWaitForConnection: 1s
   validationQuery: "/* MyApplication Health Check */ SELECT 1"

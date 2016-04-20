@@ -49,18 +49,31 @@ public class ListenerThread implements Runnable {
                 log.info("[Pattern:" + pattern + "]\t" + "[Channel: " + channel + "]\t" + "[Message: " + message + "]");
                 if (!message.equals("expired")) return;
                 String messageId = channel.substring(channel.indexOf('.') + 1);
-                Jedis jedis = cache.getJedisResource();
-                boolean flg;
-                if (jedis.setnx(messageId, messageId) == 1) {
-                    RetryItem retryItem = retryItemDao.get(messageId);
-                    if (Objects.isNull(retryItem)) return;
-                    if (retryItem.getNextRetry() < retryItem.getMaxRetry()) {
+                RetryItem retryItem;
+                try (Jedis jedis = cache.getJedisResource()) {
+                    if (jedis.setnx(messageId, messageId) == 1) {
+
+                        if (Objects.isNull(retryItem = retryItemDao.get(messageId))) return;
+
+                        if (retryItem.getNextRetry() >= retryItem.getMaxRetry()) {
+                            jerseyClient.executeFallBack(retryItem, FallBackReasons.MAX_RETRY);
+                            return;
+                        }
+
                         jedis.expire(messageId, 20);
                         Response response = jerseyClient.execute(retryItem);
-                        flg = (response.getStatus() == retryItem.getRetryStatusCode()) ? ingestionService.process(retryItem) : jerseyClient.executeFallBack(retryItem, FallBackReasons.NOT_RETRY_STATUS_CODE);
-                    } else {
-                        flg = jerseyClient.executeFallBack(retryItem, FallBackReasons.MAX_RETRY);
-                    }// TODO: 20/04/16  add failed calls to a other table
+
+                        if (Response.Status.Family.SUCCESSFUL.equals(response.getStatus())) {
+                            jerseyClient.executeSuccess(retryItem, response);
+                            return;
+                        }
+
+                        if (response.getStatus() == retryItem.getRetryStatusCode())
+                            ingestionService.process(retryItem);
+                        else
+                            jerseyClient.executeFallBack(retryItem, FallBackReasons.NOT_RETRY_STATUS_CODE);
+
+                    }
                 }
             }
 

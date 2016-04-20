@@ -65,3 +65,8 @@ database:
   evictionInterval: 10s
   minIdleTime: 1 minute
 
+threadConfigs:
+       - name: "Test1"
+         channel: "RT"
+         listenerCount: 5
+

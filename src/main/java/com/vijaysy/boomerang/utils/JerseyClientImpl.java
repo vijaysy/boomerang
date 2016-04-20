@@ -3,6 +3,7 @@ package com.vijaysy.boomerang.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
+import com.vijaysy.boomerang.enums.FallBackReasons;
 import com.vijaysy.boomerang.models.RetryItem;
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,7 +52,7 @@ public class JerseyClientImpl implements JerseyClient{
         } catch (Exception e) {
             log.error("Exception while making call for messageID "+retryItem.getMessageId());
             log.error("Exception:"+e.toString());
-            return null;
+            return Response.status(503).build();
         }
         log.info("Response for retry call" + response.toString());
         if(Response.Status.Family.SUCCESSFUL.equals(response.getStatus())&&retryItem.getNeedResponse())
@@ -61,9 +62,10 @@ public class JerseyClientImpl implements JerseyClient{
     }
 
     @Override
-    public Response executeFallBack(RetryItem retryItem) {
+    public boolean executeFallBack(RetryItem retryItem, FallBackReasons fallBackReasons) {
         WebTarget webTarget = client.target(retryItem.getFallbackHttpUri() + "/" + retryItem.getMessageId() + "/fallback");
-        return webTarget.request().header("retry","false").buildPut(Entity.text("")).invoke();
+         webTarget.request().header("retry","false").buildPut(Entity.text("")).invoke();
+        return true;
     }
 
     @Override

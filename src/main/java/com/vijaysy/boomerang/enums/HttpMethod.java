@@ -6,8 +6,8 @@ package com.vijaysy.boomerang.enums;
 public enum  HttpMethod {
     POST ("POST"), PUT("PUT") , GET("GET");
     private String method;
-    HttpMethod(String post) {
-        this.method=post;
+    HttpMethod(String method) {
+        this.method=method;
     }
 
     @Override

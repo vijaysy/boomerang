@@ -33,7 +33,7 @@ public class IngestionServiceImpl implements IngestionService {
             retryItemDao.saveOrUpdate(retryItem);
             return true;
         } catch (Exception e){
-            log.info("Exception while processing, messageID "+retryItem.getMessageId()+"\n"+e.toString());
+            log.error("Exception while processing, messageID "+retryItem.getMessageId()+"\n"+e.toString());
             return false;
         }
 

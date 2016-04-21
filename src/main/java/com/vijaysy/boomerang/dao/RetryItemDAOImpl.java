@@ -12,7 +12,7 @@ import org.hibernate.criterion.Restrictions;
 /**
  * Created by vijaysy on 08/04/16.
  */
-public class RetryItemDaoImpl extends AbstractDAO<RetryItemDaoImpl> implements RetryItemDao {
+public class RetryItemDaoImpl extends AbstractDAO<RetryItemDao> implements RetryItemDao {
     /**
      * Creates a new DAO with a given session provider.
      *

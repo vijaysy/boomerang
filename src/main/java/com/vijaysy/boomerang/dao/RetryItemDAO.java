@@ -1,5 +1,6 @@
 package com.vijaysy.boomerang.dao;
 
+import com.vijaysy.boomerang.exception.DBException;
 import com.vijaysy.boomerang.models.RetryItem;
 
 /**
@@ -8,9 +9,9 @@ import com.vijaysy.boomerang.models.RetryItem;
 public interface RetryItemDao {
     RetryItem get(String messageId);
 
-    void saveOrUpdate(RetryItem retryItem);
+    void saveOrUpdate(RetryItem retryItem) throws DBException;
 
-    void save(RetryItem retryItem);
+    void save(RetryItem retryItem) throws DBException;
 
-    void update(RetryItem retryItem);
+    void update(RetryItem retryItem) throws DBException;
 }

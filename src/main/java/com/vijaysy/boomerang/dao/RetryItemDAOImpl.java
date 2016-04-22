@@ -1,9 +1,11 @@
 package com.vijaysy.boomerang.dao;
 
 import com.google.inject.Inject;
+import com.vijaysy.boomerang.exception.DBException;
 import com.vijaysy.boomerang.utils.HibernateUtil;
 import com.vijaysy.boomerang.models.RetryItem;
 import io.dropwizard.hibernate.AbstractDAO;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -12,6 +14,7 @@ import org.hibernate.criterion.Restrictions;
 /**
  * Created by vijaysy on 08/04/16.
  */
+@Slf4j
 public class RetryItemDaoImpl extends AbstractDAO<RetryItemDao> implements RetryItemDao {
     /**
      * Creates a new DAO with a given session provider.
@@ -33,7 +36,9 @@ public class RetryItemDaoImpl extends AbstractDAO<RetryItemDao> implements Retry
                     .add(Restrictions.eq("messageId",messageId));
             return (RetryItem)criteria.uniqueResult();
         }catch (Exception e){
-            throw e;
+            log.error("Exception while getting retryItem with messageId: "+messageId);
+            log.error("Exception: "+e.toString());
+            return null;
         }finally {
             HibernateUtil.closeSession(session);
         }
@@ -42,42 +47,42 @@ public class RetryItemDaoImpl extends AbstractDAO<RetryItemDao> implements Retry
 
 
     @Override
-    public void saveOrUpdate(RetryItem retryItem){
+    public void saveOrUpdate(RetryItem retryItem) throws DBException {
         Session session = HibernateUtil.getSessionWithTransaction(sessionFactory);
         try {
             session.saveOrUpdate(retryItem);
             HibernateUtil.commitTransaction(session);
         }catch (Exception e){
             HibernateUtil.rollbackTransaction(session);
-            throw e;
+            throw new DBException("Exception while saveOrUpdate retryItem with messageId: "+retryItem.getMessageId(),e);
         }finally {
             HibernateUtil.closeSession(session);
         }
     }
 
     @Override
-    public void save(RetryItem retryItem){
+    public void save(RetryItem retryItem) throws DBException {
         Session session = HibernateUtil.getSessionWithTransaction(sessionFactory);
         try {
             session.save(retryItem);
             HibernateUtil.commitTransaction(session);
         }catch (Exception e){
             HibernateUtil.rollbackTransaction(session);
-            throw e;
+            throw new DBException("Exception while saving retryItem with messageId: "+retryItem.getMessageId(),e);
         }finally {
             HibernateUtil.closeSession(session);
         }
     }
 
     @Override
-    public void update(RetryItem retryItem) {
+    public void update(RetryItem retryItem) throws DBException {
         Session session = HibernateUtil.getSessionWithTransaction(sessionFactory);
         try {
             session.update(retryItem);
             HibernateUtil.commitTransaction(session);
         }catch (Exception e){
             HibernateUtil.rollbackTransaction(session);
-            throw e;
+            throw new DBException("Exception while updating with messageId: "+retryItem.getMessageId(),e);
         }finally {
             HibernateUtil.closeSession(session);
         }

@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.Optional;
 
 /**
  * Created by vijaysy on 08/04/16.
@@ -45,7 +46,7 @@ public class Reappear {
     @ExceptionMetered
     @Timed
     @Path("get")
-    public RetryItem getRetryItem(@QueryParam("messageId") String messageId) {
+    public Optional<RetryItem> getRetryItem(@QueryParam("messageId") String messageId) {
         return ingestionService.getRetryItem(messageId);
     }
 }

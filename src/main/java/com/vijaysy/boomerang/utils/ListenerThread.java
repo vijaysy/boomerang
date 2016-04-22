@@ -69,7 +69,7 @@ public class ListenerThread implements Runnable {
                         }
 
                         if (response.getStatus() == retryItem.getRetryStatusCode())
-                            ingestionService.process(retryItem);
+                            ingestionService.againProcess(retryItem);
                         else
                             jerseyClient.executeFallBack(retryItem, FallBackReasons.NOT_RETRY_STATUS_CODE);
 

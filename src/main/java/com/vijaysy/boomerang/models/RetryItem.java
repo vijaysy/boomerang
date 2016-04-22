@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.istack.internal.NotNull;
 import com.vijaysy.boomerang.enums.HttpMethod;
+import com.vijaysy.boomerang.exception.InvalidRetryItemException;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,6 +15,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import javax.ws.rs.core.MultivaluedHashMap;
 import java.io.Serializable;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
@@ -202,7 +205,7 @@ public class RetryItem implements Serializable{
         private int [] retryPattern;
         private String channel;
         private String fallbackHttpUri;
-        private int retryStatusCode;
+        private int retryStatusCode=0;
         private String headers;
         private Boolean needResponse;
         private MultivaluedHashMap<String, String> multivaluedHashMap = new MultivaluedHashMap<String, String>();
@@ -263,15 +266,42 @@ public class RetryItem implements Serializable{
             return this;
         }
 
-        public RetryItem createRetryItem() {
+        public RetryItem createRetryItem() throws InvalidRetryItemException{
             final ObjectMapper objectMapper=new ObjectMapper();
             try {
                 headers=objectMapper.writeValueAsString(multivaluedHashMap);
             }catch (JsonProcessingException e){
                 log.error(e.toString());
             }
+
+            if(messageId==null||messageId.length()==0)
+                throw new InvalidRetryItemException("MessageId is null");
+            if(httpMethod==null)
+                throw new InvalidRetryItemException("HttpMethod is null");
+            if(isValidURI(httpUri))
+                throw new InvalidRetryItemException("HttpUri is null");
+            if(retryPattern.length==0)
+                throw new InvalidRetryItemException("RetryPattern is null");
+            if(channel==null||channel.length()==0)
+                throw new InvalidRetryItemException("Channel is null");
+            if(isValidURI(fallbackHttpUri))
+                throw new InvalidRetryItemException("FallbackHttpUri is null");
+            if(retryStatusCode==0)
+                throw new InvalidRetryItemException("RetryStatusCode is zero");
+
             return new RetryItem(messageId, message, httpMethod, httpUri, nextRetry, retryPattern, fallbackHttpUri, channel, headers, needResponse,retryStatusCode);
         }
+
+        static boolean isValidURI(String uriStr) {
+            try {
+                URI uri = new URI(uriStr);
+                return true;
+            }
+            catch (URISyntaxException e) {
+                return false;
+            }
+        }
+
     }
 
 }

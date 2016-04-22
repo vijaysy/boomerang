@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.vijaysy.boomerang.exception.ReappearException;
 import com.vijaysy.boomerang.models.RetryItem;
 import com.vijaysy.boomerang.services.IngestionService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,17 +25,19 @@ public class Reappear {
     private final IngestionService ingestionService;
 
     @Inject
-    public Reappear(IngestionService ingestionService){
-        this.ingestionService=ingestionService;
+    public Reappear(IngestionService ingestionService) {
+        this.ingestionService = ingestionService;
     }
 
     @POST()
     @ExceptionMetered
     @Timed
     @Path("reappear")
-    public void doReappear(RetryItem retryItem)throws Exception{
-        log.info("Retry Item received: "+retryItem);
-        ingestionService.process(retryItem);
+    public boolean doReappear(RetryItem retryItem) throws Exception {
+        log.info("Retry Item received: " + retryItem);
+        if (ingestionService.process(retryItem))
+            return true;
+        throw new ReappearException("Exception happened, please check the log with messageID:"+retryItem.getMessageId());
 
     }
 
@@ -42,7 +45,7 @@ public class Reappear {
     @ExceptionMetered
     @Timed
     @Path("get")
-    public RetryItem getRetryItem(@QueryParam("messageId") String messageId){
-        return  ingestionService.getRetryItem(messageId);
+    public RetryItem getRetryItem(@QueryParam("messageId") String messageId) {
+        return ingestionService.getRetryItem(messageId);
     }
 }

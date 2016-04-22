@@ -11,4 +11,6 @@ public interface RetryItemDao {
     void saveOrUpdate(RetryItem retryItem);
 
     void save(RetryItem retryItem);
+
+    void update(RetryItem retryItem);
 }

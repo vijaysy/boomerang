@@ -68,4 +68,21 @@ public class RetryItemDaoImpl extends AbstractDAO<RetryItemDao> implements Retry
             HibernateUtil.closeSession(session);
         }
     }
+
+    @Override
+    public void update(RetryItem retryItem) {
+        Session session = HibernateUtil.getSessionWithTransaction(sessionFactory);
+        try {
+            session.update(retryItem);
+            HibernateUtil.commitTransaction(session);
+        }catch (Exception e){
+            HibernateUtil.rollbackTransaction(session);
+            throw e;
+        }finally {
+            HibernateUtil.closeSession(session);
+        }
+
+    }
+
+
 }

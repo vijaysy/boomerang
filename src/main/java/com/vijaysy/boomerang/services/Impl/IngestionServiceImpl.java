@@ -8,6 +8,9 @@ import com.vijaysy.boomerang.services.IngestionService;
 import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
 
+import java.util.Objects;
+import java.util.Optional;
+
 /**
  * Created by vijaysy on 08/04/16.
  */
@@ -30,7 +33,7 @@ public class IngestionServiceImpl implements IngestionService {
             String key = retryItem.getChannel() + "." + retryItem.getMessageId();
             retryItem.setNextRetry(retryItem.getNextRetry() + 1);
             jedis.setex(key, timeout, key);
-            retryItemDao.saveOrUpdate(retryItem);
+            retryItemDao.save(retryItem);
             return true;
         } catch (Exception e){
             log.error("Exception while processing, messageID "+retryItem.getMessageId()+"\n"+e.toString());
@@ -40,7 +43,23 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     @Override
-    public RetryItem getRetryItem(String messageId) {
-        return retryItemDao.get(messageId);
+    public boolean againProcess(RetryItem retryItem) {
+        try (Jedis jedis = cache.getJedisResource()) {
+            int timeout = Integer.valueOf(retryItem.getRetryPattern()[retryItem.getNextRetry()]) * 60;
+            String key = retryItem.getChannel() + "." + retryItem.getMessageId();
+            retryItem.setNextRetry(retryItem.getNextRetry() + 1);
+            jedis.setex(key, timeout, key);
+            retryItemDao.update(retryItem);
+            return true;
+        } catch (Exception e){
+            log.error("Exception while processing, messageID "+retryItem.getMessageId()+"\n"+e.toString());
+            return false;
+        }
+    }
+
+    @Override
+    public Optional<RetryItem> getRetryItem(String messageId) {
+        RetryItem retryItem = retryItemDao.get(messageId);
+        return (Objects.isNull(retryItem))?Optional.<RetryItem>empty():Optional.of(retryItem);
     }
 }

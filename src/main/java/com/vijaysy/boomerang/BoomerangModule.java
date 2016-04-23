@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.vijaysy.boomerang.core.Cache;
+import com.vijaysy.boomerang.core.MangedCache;
 import com.vijaysy.boomerang.dao.RetryItemDao;
 import com.vijaysy.boomerang.dao.RetryItemDaoImpl;
 import com.vijaysy.boomerang.services.IngestionService;
@@ -36,7 +36,7 @@ public class BoomerangModule extends AbstractModule{
 
     @Override
     protected void configure() {
-        bind(Cache.class).in(Singleton.class);
+        bind(MangedCache.class).in(Singleton.class);
         bind(IngestionService.class).to(IngestionServiceImpl.class).in(Singleton.class);
         bind(ListenerService.class).to(ListenerServiceImpl.class).in(Singleton.class);
         bind(JerseyClient.class).to(JerseyClientImpl.class).in(Singleton.class);

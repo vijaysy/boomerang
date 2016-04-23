@@ -21,6 +21,8 @@
 *javadoc/**
 docs/build/**
 
+*.deb
+
 ### Gradle ###
 .gradle/
 build/

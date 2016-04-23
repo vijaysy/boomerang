@@ -65,6 +65,7 @@ public class ManagedClient implements Managed {
 
     @Override
     public void stop() throws Exception {
+        log.info("Closing Jersey client ");
         client.close();
 
     }

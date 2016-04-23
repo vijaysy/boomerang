@@ -14,12 +14,12 @@ import java.util.Objects;
  */
 @Slf4j
 @Singleton
-public class Cache implements Managed {
+public class MangedCache implements Managed {
 
     private JedisSentinelPool jedisSentinelPool;
 
     @Inject
-    public Cache(JedisSentinelPool jedisSentinelPool) {
+    public MangedCache(JedisSentinelPool jedisSentinelPool) {
         this.jedisSentinelPool=jedisSentinelPool;
     }
 

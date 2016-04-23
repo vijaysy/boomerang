@@ -1,6 +1,6 @@
 package com.vijaysy.boomerang.utils;
 
-import com.vijaysy.boomerang.core.Cache;
+import com.vijaysy.boomerang.core.MangedCache;
 import com.vijaysy.boomerang.dao.RetryItemDao;
 import com.vijaysy.boomerang.enums.FallBackReasons;
 import com.vijaysy.boomerang.models.RetryItem;
@@ -20,19 +20,19 @@ import java.util.Objects;
 public class ListenerThread implements Runnable {
     private final String channel;
     private final Jedis jedis;
-    private final Cache cache;
+    private final MangedCache mangedCache;
     private final RetryItemDao retryItemDao;
     private final JerseyClient jerseyClient;
     private final IngestionService ingestionService;
 
 
-    public ListenerThread(Cache cache, String channel, RetryItemDao retryItemDao, JerseyClient jerseyClient, IngestionService ingestionService) {
-        this.cache = cache;
+    public ListenerThread(MangedCache mangedCache, String channel, RetryItemDao retryItemDao, JerseyClient jerseyClient, IngestionService ingestionService) {
+        this.mangedCache = mangedCache;
         this.channel = "__key*__:" + channel + ".*";
         this.retryItemDao = retryItemDao;
         this.jerseyClient = jerseyClient;
         this.ingestionService = ingestionService;
-        this.jedis = cache.getJedisResource();
+        this.jedis = mangedCache.getJedisResource();
     }
 
     @Override
@@ -50,7 +50,7 @@ public class ListenerThread implements Runnable {
                 if (!message.equals("expired")) return;
                 String messageId = channel.substring(channel.indexOf('.') + 1);
                 RetryItem retryItem;
-                try (Jedis jedis = cache.getJedisResource()) {
+                try (Jedis jedis = mangedCache.getJedisResource()) {
                     if (jedis.setnx(messageId, messageId) == 1) {
 
                         if (Objects.isNull(retryItem = retryItemDao.get(messageId))) return;

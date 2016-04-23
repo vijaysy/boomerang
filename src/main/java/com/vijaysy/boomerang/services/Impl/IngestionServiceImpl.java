@@ -1,7 +1,7 @@
 package com.vijaysy.boomerang.services.impl;
 
 import com.google.inject.Inject;
-import com.vijaysy.boomerang.core.Cache;
+import com.vijaysy.boomerang.core.MangedCache;
 import com.vijaysy.boomerang.dao.RetryItemDao;
 import com.vijaysy.boomerang.models.RetryItem;
 import com.vijaysy.boomerang.services.IngestionService;
@@ -19,17 +19,17 @@ import java.util.Set;
 public class IngestionServiceImpl implements IngestionService {
 
     private final RetryItemDao retryItemDao;
-    private final Cache cache;
+    private final MangedCache mangedCache;
 
     @Inject
-    IngestionServiceImpl(Cache cache, RetryItemDao retryItemDao){
-        this.cache=cache;
+    IngestionServiceImpl(MangedCache mangedCache, RetryItemDao retryItemDao){
+        this.mangedCache = mangedCache;
         this.retryItemDao = retryItemDao;
 
     }
     @Override
     public boolean process(RetryItem retryItem)  {
-        try (Jedis jedis = cache.getJedisResource()) {
+        try (Jedis jedis = mangedCache.getJedisResource()) {
             int timeout = Integer.valueOf(retryItem.getRetryPattern()[retryItem.getNextRetry()]) * 60;
             String key = retryItem.getChannel() + "." + retryItem.getMessageId();
             retryItem.setNextRetry(retryItem.getNextRetry() + 1);
@@ -45,7 +45,7 @@ public class IngestionServiceImpl implements IngestionService {
 
     @Override
     public boolean againProcess(RetryItem retryItem) {
-        try (Jedis jedis = cache.getJedisResource()) {
+        try (Jedis jedis = mangedCache.getJedisResource()) {
             int timeout = Integer.valueOf(retryItem.getRetryPattern()[retryItem.getNextRetry()]) * 60;
             String key = retryItem.getChannel() + "." + retryItem.getMessageId();
             retryItem.setNextRetry(retryItem.getNextRetry() + 1);
@@ -60,7 +60,7 @@ public class IngestionServiceImpl implements IngestionService {
 
     @Override
     public Set<String> getKeys(String pattern) {
-        try (Jedis jedis = cache.getJedisResource()){
+        try (Jedis jedis = mangedCache.getJedisResource()){
             return (pattern!=null&& !pattern.isEmpty()) ? jedis.keys(pattern+"*") :jedis.keys("*");
         }
     }

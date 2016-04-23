@@ -22,17 +22,17 @@ public class ManagedListener implements Managed {
     private final BoomerangConfiguration boomerangConfiguration;
     private final JerseyClient jerseyClient;
     private final RetryItemDao retryItemDao;
-    private final Cache cache;
+    private final MangedCache mangedCache;
     private final IngestionService ingestionService;
     private final ThreadPoolExecutor threadPoolExecutor;
 
     @Inject
-    public ManagedListener(BoomerangConfiguration boomerangConfiguration, ThreadPoolExecutor threadPoolExecutor, JerseyClient jerseyClient , RetryItemDao retryItemDao,Cache cache,IngestionService ingestionService){
+    public ManagedListener(BoomerangConfiguration boomerangConfiguration, ThreadPoolExecutor threadPoolExecutor, JerseyClient jerseyClient , RetryItemDao retryItemDao, MangedCache mangedCache, IngestionService ingestionService){
         this.boomerangConfiguration=boomerangConfiguration;
         this.threadPoolExecutor=threadPoolExecutor;
         this.jerseyClient=jerseyClient;
         this.retryItemDao=retryItemDao;
-        this.cache=cache;
+        this.mangedCache = mangedCache;
         this.ingestionService=ingestionService;
     }
     @Override
@@ -40,7 +40,7 @@ public class ManagedListener implements Managed {
         boomerangConfiguration.getThreadConfigs().forEach(threadConfig -> {
             for (int i=0;i< threadConfig.getListenerCount();i++) {
                 log.info("Creating thread "+i+" of name "+threadConfig.getName());
-                threadPoolExecutor.execute(new ListenerThread(cache, threadConfig.getChannel(), retryItemDao, jerseyClient, ingestionService));
+                threadPoolExecutor.execute(new ListenerThread(mangedCache, threadConfig.getChannel(), retryItemDao, jerseyClient, ingestionService));
             }
         });
 
@@ -48,6 +48,7 @@ public class ManagedListener implements Managed {
 
     @Override
     public void stop() throws Exception {
+        log.info("Shutting down thread pool executor ");
         threadPoolExecutor.shutdown();
 
     }

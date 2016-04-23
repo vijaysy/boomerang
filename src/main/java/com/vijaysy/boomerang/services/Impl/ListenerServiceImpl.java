@@ -1,7 +1,7 @@
 package com.vijaysy.boomerang.services.impl;
 
 import com.google.inject.Inject;
-import com.vijaysy.boomerang.core.Cache;
+import com.vijaysy.boomerang.core.MangedCache;
 import com.vijaysy.boomerang.dao.RetryItemDao;
 import com.vijaysy.boomerang.models.config.ThreadConfig;
 import com.vijaysy.boomerang.services.IngestionService;
@@ -22,13 +22,13 @@ public class ListenerServiceImpl implements ListenerService {
 
     private final JerseyClientImpl jerseyClient;
     private final RetryItemDao retryItemDao;
-    private final Cache cache;
+    private final MangedCache mangedCache;
     private final IngestionService ingestionService;
     private final ThreadPoolExecutor threadPoolExecutor;
 
     @Inject
-    public ListenerServiceImpl(JerseyClientImpl jerseyClient, RetryItemDao retryItemDao, Cache cache, IngestionService ingestionService, ThreadPoolExecutor threadPoolExecutor){
-        this.cache=cache;
+    public ListenerServiceImpl(JerseyClientImpl jerseyClient, RetryItemDao retryItemDao, MangedCache mangedCache, IngestionService ingestionService, ThreadPoolExecutor threadPoolExecutor){
+        this.mangedCache = mangedCache;
         this.retryItemDao = retryItemDao;
         this.jerseyClient=jerseyClient;
         this.ingestionService=ingestionService;
@@ -40,7 +40,7 @@ public class ListenerServiceImpl implements ListenerService {
     public void createListener(ThreadConfig threadConfig) {
         for (int i=0;i< threadConfig.getListenerCount();i++) {
             log.info("Creating thread "+i+" of name "+threadConfig.getName());
-            threadPoolExecutor.execute(new ListenerThread(cache, threadConfig.getChannel(), retryItemDao, jerseyClient, ingestionService));
+            threadPoolExecutor.execute(new ListenerThread(mangedCache, threadConfig.getChannel(), retryItemDao, jerseyClient, ingestionService));
         }
 
     }

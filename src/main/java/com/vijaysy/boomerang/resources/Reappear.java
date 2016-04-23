@@ -39,7 +39,7 @@ public class Reappear {
         log.info("Retry Item received: " + retryItem);
         if (ingestionService.process(retryItem))
             return true;
-        throw new ReappearException("Exception happened, please check the log with messageID:"+retryItem.getMessageId());
+        throw new ReappearException("Exception happened, please check the log with messageID:" + retryItem.getMessageId());
 
     }
 
@@ -52,13 +52,12 @@ public class Reappear {
     }
 
 
-
     @GET
     @ExceptionMetered
     @Timed
     @Path("keys")
-    public Set<String> getKeys(@QueryParam("pattern") String pattern){
-        Set<String> strings = ingestionService.getKeys(pattern);
-         return strings;
+    public Set<String> getKeys(@QueryParam("pattern") String pattern) {
+        return ingestionService.getKeys(pattern);
+
     }
 }

@@ -59,9 +59,9 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     @Override
-    public Set<String> getKeys() {
+    public Set<String> getKeys(String pattern) {
         try (Jedis jedis = cache.getJedisResource()){
-            return jedis.keys("*");
+            return (pattern!=null&& !pattern.isEmpty()) ? jedis.keys(pattern+"*") :jedis.keys("*");
         }
     }
 

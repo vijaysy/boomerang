@@ -15,5 +15,5 @@ public interface IngestionService {
 
     boolean againProcess(RetryItem retryItem);
 
-    Set<String> getKeys();
+    Set<String> getKeys(String pattern);
 }

@@ -57,7 +57,8 @@ public class Reappear {
     @ExceptionMetered
     @Timed
     @Path("keys")
-    public Set<String> getKeys(){
-        return ingestionService.getKeys();
+    public Set<String> getKeys(@QueryParam("pattern") String pattern){
+        Set<String> strings = ingestionService.getKeys(pattern);
+         return strings;
     }
 }

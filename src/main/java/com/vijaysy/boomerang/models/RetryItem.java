@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.istack.internal.NotNull;
 import com.vijaysy.boomerang.enums.HttpMethod;
 import com.vijaysy.boomerang.exception.InvalidRetryItemException;
 import lombok.ToString;
@@ -13,6 +12,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.MultivaluedHashMap;
 import java.io.Serializable;
 import java.net.URI;

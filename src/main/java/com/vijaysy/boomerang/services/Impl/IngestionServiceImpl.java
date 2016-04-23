@@ -10,6 +10,7 @@ import redis.clients.jedis.Jedis;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Created by vijaysy on 08/04/16.
@@ -58,8 +59,18 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     @Override
+    public Set<String> getKeys() {
+        try (Jedis jedis = cache.getJedisResource()){
+            return jedis.keys("*");
+        }
+    }
+
+    @Override
     public Optional<RetryItem> getRetryItem(String messageId) {
         RetryItem retryItem = retryItemDao.get(messageId);
         return (Objects.isNull(retryItem))?Optional.<RetryItem>empty():Optional.of(retryItem);
     }
+
+
+
 }

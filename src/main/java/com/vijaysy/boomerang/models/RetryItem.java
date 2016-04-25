@@ -110,13 +110,20 @@ public class RetryItem implements Serializable{
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
-    public Date createdAt;
+    private Date createdAt;
 
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp
-    public Date updatedAt;
+    private Date updatedAt;
 
+    @JsonProperty
+    @Column(name = "processed")
+    private boolean processed=false;
+
+    @JsonProperty
+    @Column(name = "return_flag")
+    private boolean returnFlag=true;
 
 
     public int getId() {
@@ -171,8 +178,32 @@ public class RetryItem implements Serializable{
         return needResponse;
     }
 
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public boolean isProcessed() {
+        return processed;
+    }
+
+    public boolean isReturnFlag() {
+        return returnFlag;
+    }
+
     public void setNextRetry(int nextRetry) {
         this.nextRetry = nextRetry;
+    }
+
+    public void setProcessed(boolean processed) {
+        this.processed = processed;
+    }
+
+    public void setReturnFlag(boolean returnFlag) {
+        this.returnFlag = returnFlag;
     }
 
     @Override

@@ -9,7 +9,7 @@ mkdir -p $TEMP_DIR
 mkdir -p $TEMP_DIR/DEBIAN
 mkdir -p $TEMP_DIR/usr/local/var/lib/$PACKAGE_NAME
 mkdir -p $TEMP_DIR/usr/local/etc/$PACKAGE_NAME
-mkdir -p $TEMP_DIR/usr/local/etc/init.d
+#mkdir -p $TEMP_DIR/usr/local/etc/init.d
 mkdir -p $TEMP_DIR/usr/local/var/log/$PACKAGE_NAME
 
 

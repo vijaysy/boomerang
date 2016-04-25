@@ -29,7 +29,7 @@ public class RetryItemDaoImpl extends AbstractDAO<RetryItemDao> implements Retry
     }
 
     @Override
-    public RetryItem get(String messageId){
+    public RetryItem get(String messageId) throws DBException {
         Session session = HibernateUtil.getSession(sessionFactory);
         try {
             Criteria criteria = session.createCriteria(RetryItem.class)
@@ -38,7 +38,7 @@ public class RetryItemDaoImpl extends AbstractDAO<RetryItemDao> implements Retry
         }catch (Exception e){
             log.error("Exception while getting retryItem with messageId: "+messageId);
             log.error("Exception: "+e.toString());
-            return null;
+            throw new DBException("Exception while getting retryItem with messageId: "+messageId,e);
         }finally {
             HibernateUtil.closeSession(session);
         }

@@ -7,7 +7,7 @@ import com.vijaysy.boomerang.models.RetryItem;
  * Created by vijaysy on 19/04/16.
  */
 public interface RetryItemDao {
-    RetryItem get(String messageId);
+    RetryItem get(String messageId) throws DBException;
 
     void saveOrUpdate(RetryItem retryItem) throws DBException;
 

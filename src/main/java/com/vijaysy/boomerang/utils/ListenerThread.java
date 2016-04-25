@@ -61,10 +61,15 @@ public class ListenerThread implements Runnable {
                         }
 
                         jedis.expire(messageId, 20);
+
                         Response response = jerseyClient.execute(retryItem);
 
                         if (Response.Status.Family.SUCCESSFUL.equals(response.getStatus())) {
-                            jerseyClient.executeSuccess(retryItem, response);
+                            if (Response.Status.Family.SUCCESSFUL.equals(jerseyClient.executeSuccess(retryItem, response).getStatus()))
+                                retryItem.setProcessed(true);
+                            else
+                                retryItem.setReturnFlag(false);
+                            retryItemDao.update(retryItem);
                             return;
                         }
 
@@ -74,6 +79,8 @@ public class ListenerThread implements Runnable {
                             jerseyClient.executeFallBack(retryItem, FallBackReasons.NOT_RETRY_STATUS_CODE);
 
                     }
+                } catch (Exception e) {
+                    log.error("Exception " + e.toString());
                 }
             }
 

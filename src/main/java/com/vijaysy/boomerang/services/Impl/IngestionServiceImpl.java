@@ -3,6 +3,7 @@ package com.vijaysy.boomerang.services.impl;
 import com.google.inject.Inject;
 import com.vijaysy.boomerang.core.MangedCache;
 import com.vijaysy.boomerang.dao.RetryItemDao;
+import com.vijaysy.boomerang.exception.DBException;
 import com.vijaysy.boomerang.models.RetryItem;
 import com.vijaysy.boomerang.services.IngestionService;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +67,7 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     @Override
-    public Optional<RetryItem> getRetryItem(String messageId) {
+    public Optional<RetryItem> getRetryItem(String messageId) throws DBException {
         RetryItem retryItem = retryItemDao.get(messageId);
         return (Objects.isNull(retryItem))?Optional.<RetryItem>empty():Optional.of(retryItem);
     }

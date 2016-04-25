@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vijaysy.boomerang.enums.FallBackReasons;
 import com.vijaysy.boomerang.enums.HttpMethod;
 import com.vijaysy.boomerang.exception.InvalidRetryItemException;
 import lombok.ToString;
@@ -125,6 +126,11 @@ public class RetryItem implements Serializable{
     @Column(name = "return_flag")
     private boolean returnFlag=true;
 
+    @JsonProperty
+    @Enumerated(EnumType.STRING)
+    @Column(name = "fall_back_reason")
+    private FallBackReasons fallBackReasons;
+
 
     public int getId() {
         return id;
@@ -194,6 +200,10 @@ public class RetryItem implements Serializable{
         return returnFlag;
     }
 
+    public FallBackReasons getFallBackReasons() {
+        return fallBackReasons;
+    }
+
     public void setNextRetry(int nextRetry) {
         this.nextRetry = nextRetry;
     }
@@ -204,6 +214,10 @@ public class RetryItem implements Serializable{
 
     public void setReturnFlag(boolean returnFlag) {
         this.returnFlag = returnFlag;
+    }
+
+    public void setFallBackReasons(FallBackReasons fallBackReasons) {
+        this.fallBackReasons = fallBackReasons;
     }
 
     @Override

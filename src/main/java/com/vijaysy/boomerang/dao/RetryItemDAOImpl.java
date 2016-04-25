@@ -11,6 +11,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
+import java.util.List;
+
 /**
  * Created by vijaysy on 08/04/16.
  */
@@ -83,6 +85,19 @@ public class RetryItemDaoImpl extends AbstractDAO<RetryItemDao> implements Retry
         }catch (Exception e){
             HibernateUtil.rollbackTransaction(session);
             throw new DBException("Exception while updating with messageId: "+retryItem.getMessageId(),e);
+        }finally {
+            HibernateUtil.closeSession(session);
+        }
+
+    }
+
+    @Override
+    public List<RetryItem> getAll() throws DBException {
+        Session session = HibernateUtil.getSession(sessionFactory);
+        try {
+            return session.createCriteria(RetryItem.class).list();
+        }catch (Exception e){
+            throw new DBException("Exception while reading all retryItems",e);
         }finally {
             HibernateUtil.closeSession(session);
         }

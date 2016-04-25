@@ -56,7 +56,14 @@ public class ListenerThread implements Runnable {
                         if (Objects.isNull(retryItem = retryItemDao.get(messageId))) return;
 
                         if (retryItem.getNextRetry() >= retryItem.getMaxRetry()) {
-                            jerseyClient.executeFallBack(retryItem, FallBackReasons.MAX_RETRY);
+                            retryItem.setFallBackReasons(FallBackReasons.MAX_RETRY);
+                            retryItemDao.update(retryItem);
+                            if(Response.Status.Family.SUCCESSFUL.equals(jerseyClient.executeFallBack(retryItem)))
+                                retryItem.setProcessed(true);
+                            else
+                                retryItem.setProcessed(false);
+                            retryItemDao.update(retryItem);
+
                             return;
                         }
 
@@ -75,8 +82,16 @@ public class ListenerThread implements Runnable {
 
                         if (response.getStatus() == retryItem.getRetryStatusCode())
                             ingestionService.againProcess(retryItem);
-                        else
-                            jerseyClient.executeFallBack(retryItem, FallBackReasons.NOT_RETRY_STATUS_CODE);
+                        else{
+                            retryItem.setFallBackReasons(FallBackReasons.NOT_RETRY_STATUS_CODE);
+                            retryItemDao.update(retryItem);
+                            if(Response.Status.Family.SUCCESSFUL.equals(jerseyClient.executeFallBack(retryItem)))
+                                retryItem.setProcessed(true);
+                            else
+                                retryItem.setProcessed(false);
+                            retryItemDao.update(retryItem);
+                        }
+
 
                     }
                 } catch (Exception e) {

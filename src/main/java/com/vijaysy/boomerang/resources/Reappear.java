@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.vijaysy.boomerang.exception.DBException;
 import com.vijaysy.boomerang.exception.ReappearException;
 import com.vijaysy.boomerang.models.RetryItem;
 import com.vijaysy.boomerang.services.IngestionService;
@@ -47,7 +48,7 @@ public class Reappear {
     @ExceptionMetered
     @Timed
     @Path("get")
-    public Optional<RetryItem> getRetryItem(@QueryParam("messageId") String messageId) {
+    public Optional<RetryItem> getRetryItem(@QueryParam("messageId") String messageId) throws DBException {
         return ingestionService.getRetryItem(messageId);
     }
 

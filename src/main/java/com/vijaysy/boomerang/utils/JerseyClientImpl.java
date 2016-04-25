@@ -4,6 +4,7 @@ package com.vijaysy.boomerang.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.vijaysy.boomerang.core.ManagedClient;
+import com.vijaysy.boomerang.enums.FallBackReasons;
 import com.vijaysy.boomerang.models.RetryItem;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,11 +46,12 @@ public class JerseyClientImpl implements JerseyClient {
 
 
     @Override
-    public Response returnExecute(RetryItem retryItem, Response response, boolean flg) {
+    public Response returnExecute(RetryItem retryItem, Response response) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
+        boolean flg =retryItem.getFallBackReasons().equals(FallBackReasons.SUCCESSFULL);
         headers.putSingle("retry", flg);
         headers.putSingle("reason",retryItem.getFallBackReasons());
-        Object body= (retryItem.getNeedResponse())?response:"";
+        Object body= (retryItem.getNeedResponse()&&flg)?response:"";
         return  managedClient.invokePut(retryItem.getFallbackHttpUri() + "/" + retryItem.getMessageId() + "/fallback",body,headers,"executeFallBack");
     }
 

@@ -87,7 +87,7 @@ public class ListenerThread implements Runnable {
         retryItem.setFallBackReasons(fallBackReasons);
         retryItem.setProcessed(true);
         retryItemDao.update(retryItem);
-        retryItem.setReturnFlag(Response.Status.Family.SUCCESSFUL.equals(jerseyClient.returnExecute(retryItem, response, fallBackReasons.equals(FallBackReasons.SUCCESSFULL))));
+        retryItem.setReturnFlag(Response.Status.Family.SUCCESSFUL.equals(jerseyClient.returnExecute(retryItem, response)));
         retryItemDao.update(retryItem);
 
     }

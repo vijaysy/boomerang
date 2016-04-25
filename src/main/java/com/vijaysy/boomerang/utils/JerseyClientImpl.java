@@ -43,18 +43,12 @@ public class JerseyClientImpl implements JerseyClient {
         }
     }
 
-    @Override
-    public Response executeFallBack(RetryItem retryItem) {
-        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
-        headers.putSingle("retry", "false");
-        headers.putSingle("reason",retryItem.getFallBackReasons());
-        return  managedClient.invokePut(retryItem.getFallbackHttpUri() + "/" + retryItem.getMessageId() + "/fallback","",headers,"executeFallBack");
-    }
 
     @Override
-    public Response executeSuccess(RetryItem retryItem, Response response) {
+    public Response returnExecute(RetryItem retryItem, Response response, boolean flg) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
-        headers.putSingle("retry", "true");
+        headers.putSingle("retry", flg);
+        headers.putSingle("reason",retryItem.getFallBackReasons());
         Object body= (retryItem.getNeedResponse())?response:"";
         return  managedClient.invokePut(retryItem.getFallbackHttpUri() + "/" + retryItem.getMessageId() + "/fallback",body,headers,"executeFallBack");
     }

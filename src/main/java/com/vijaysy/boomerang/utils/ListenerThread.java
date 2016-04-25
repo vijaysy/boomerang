@@ -3,6 +3,7 @@ package com.vijaysy.boomerang.utils;
 import com.vijaysy.boomerang.core.MangedCache;
 import com.vijaysy.boomerang.dao.RetryItemDao;
 import com.vijaysy.boomerang.enums.FallBackReasons;
+import com.vijaysy.boomerang.exception.DBException;
 import com.vijaysy.boomerang.models.RetryItem;
 import com.vijaysy.boomerang.services.IngestionService;
 import lombok.extern.slf4j.Slf4j;
@@ -54,44 +55,18 @@ public class ListenerThread implements Runnable {
                     if (jedis.setnx(messageId, messageId) == 1) {
 
                         if (Objects.isNull(retryItem = retryItemDao.get(messageId))) return;
-
                         if (retryItem.getNextRetry() >= retryItem.getMaxRetry()) {
-                            retryItem.setFallBackReasons(FallBackReasons.MAX_RETRY);
-                            retryItemDao.update(retryItem);
-                            if(Response.Status.Family.SUCCESSFUL.equals(jerseyClient.executeFallBack(retryItem)))
-                                retryItem.setProcessed(true);
-                            else
-                                retryItem.setProcessed(false);
-                            retryItemDao.update(retryItem);
-
+                            process(retryItem, FallBackReasons.MAX_RETRY, Response.status(400).build());
                             return;
                         }
-
                         jedis.expire(messageId, 20);
-
                         Response response = jerseyClient.execute(retryItem);
-
-                        if (Response.Status.Family.SUCCESSFUL.equals(response.getStatus())) {
-                            if (Response.Status.Family.SUCCESSFUL.equals(jerseyClient.executeSuccess(retryItem, response).getStatus()))
-                                retryItem.setProcessed(true);
-                            else
-                                retryItem.setReturnFlag(false);
-                            retryItemDao.update(retryItem);
-                            return;
-                        }
-
-                        if (response.getStatus() == retryItem.getRetryStatusCode())
+                        if (Response.Status.Family.SUCCESSFUL.equals(response.getStatus()))
+                            process(retryItem, FallBackReasons.SUCCESSFULL, response);
+                        else if (response.getStatus() == retryItem.getRetryStatusCode())
                             ingestionService.againProcess(retryItem);
-                        else{
-                            retryItem.setFallBackReasons(FallBackReasons.NOT_RETRY_STATUS_CODE);
-                            retryItemDao.update(retryItem);
-                            if(Response.Status.Family.SUCCESSFUL.equals(jerseyClient.executeFallBack(retryItem)))
-                                retryItem.setProcessed(true);
-                            else
-                                retryItem.setProcessed(false);
-                            retryItemDao.update(retryItem);
-                        }
-
+                        else
+                            process(retryItem, FallBackReasons.NOT_RETRY_STATUS_CODE, response);
 
                     }
                 } catch (Exception e) {
@@ -105,6 +80,16 @@ public class ListenerThread implements Runnable {
             }
 
         }, channel);
+
+    }
+
+    private void process(RetryItem retryItem, FallBackReasons fallBackReasons, Response response) throws DBException {
+        retryItem.setFallBackReasons(fallBackReasons);
+        retryItem.setProcessed(true);
+        retryItemDao.update(retryItem);
+        retryItem.setReturnFlag(Response.Status.Family.SUCCESSFUL.equals(jerseyClient.returnExecute(retryItem, response, fallBackReasons.equals(FallBackReasons.SUCCESSFULL))));
+        retryItemDao.update(retryItem);
+
     }
 
 }

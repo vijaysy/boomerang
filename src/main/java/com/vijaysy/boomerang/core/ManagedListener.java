@@ -49,7 +49,7 @@ public class ManagedListener implements Managed {
     @Override
     public void stop() throws Exception {
         log.info("Shutting down thread pool executor ");
-        threadPoolExecutor.shutdown();
+        threadPoolExecutor.shutdownNow();
 
     }
 }

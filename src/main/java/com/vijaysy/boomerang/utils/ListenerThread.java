@@ -88,7 +88,6 @@ public class ListenerThread implements Runnable {
         retryItem.setProcessed(true);
         retryItem.setReturnFlag(Response.Status.Family.SUCCESSFUL.equals(jerseyClient.returnExecute(retryItem, response)));
         retryItemDao.update(retryItem);
-
     }
 
 }

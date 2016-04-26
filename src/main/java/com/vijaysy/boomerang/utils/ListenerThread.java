@@ -86,7 +86,6 @@ public class ListenerThread implements Runnable {
     private void process(RetryItem retryItem, FallBackReasons fallBackReasons, Response response) throws DBException {
         retryItem.setFallBackReasons(fallBackReasons);
         retryItem.setProcessed(true);
-        retryItemDao.update(retryItem);
         retryItem.setReturnFlag(Response.Status.Family.SUCCESSFUL.equals(jerseyClient.returnExecute(retryItem, response)));
         retryItemDao.update(retryItem);
 

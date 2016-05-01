@@ -1,5 +1,7 @@
 package com.vijaysy.boomerang.utils;
 
+import com.jcabi.aspects.Async;
+import com.jcabi.aspects.Parallel;
 import com.vijaysy.boomerang.core.MangedCache;
 import com.vijaysy.boomerang.dao.RetryItemDao;
 import com.vijaysy.boomerang.enums.FallBackReasons;
@@ -37,6 +39,7 @@ public class ListenerThread implements Runnable {
     }
 
     @Override
+    @Parallel(threads = 2)
     public void run() {
         jedis.psubscribe(new JedisPubSub() {
 
@@ -83,6 +86,7 @@ public class ListenerThread implements Runnable {
 
     }
 
+    @Async
     private void process(RetryItem retryItem, FallBackReasons fallBackReasons, Response response) throws DBException {
         retryItem.setFallBackReasons(fallBackReasons);
         retryItem.setProcessed(true);

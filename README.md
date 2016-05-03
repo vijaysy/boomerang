@@ -2,7 +2,7 @@
 
 ### What dose it do ??
 
-It enables you to make a repeated http requests in a pattern to a server on specified http status code, also it will hit you back with a put http method with retry status  (Async in nature)
+It enables you to make  repeated http requests in a pattern to a server on specified http status code, also it will hit you back with a put http method with retry status  (Async in nature)
 
 
 ### Configarables 

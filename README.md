@@ -18,7 +18,7 @@ It enables you to make  repeated http requests in a pattern to a server on speci
 
 
 ### Project Status: Development
-* Frame work: dropwizard 0.8.2
+* Framework: dropwizard 0.8.2
 
 ### Code example
 TODO :+1:

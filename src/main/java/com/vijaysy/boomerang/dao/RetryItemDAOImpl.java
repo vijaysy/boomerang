@@ -2,7 +2,7 @@ package com.vijaysy.boomerang.dao;
 
 import com.google.inject.Inject;
 import com.vijaysy.boomerang.exception.DBException;
-import com.vijaysy.boomerang.utils.HibernateUtil;
+import com.vijaysy.boomerang.helpers.HibernateUtil;
 import com.vijaysy.boomerang.models.RetryItem;
 import io.dropwizard.hibernate.AbstractDAO;
 import lombok.extern.slf4j.Slf4j;

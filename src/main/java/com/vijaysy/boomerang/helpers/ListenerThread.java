@@ -1,10 +1,12 @@
-package com.vijaysy.boomerang.utils;
+package com.vijaysy.boomerang.helpers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcabi.aspects.Async;
-import com.jcabi.aspects.Parallel;
 import com.vijaysy.boomerang.core.MangedCache;
+import com.vijaysy.boomerang.core.restclient.RestClient;
 import com.vijaysy.boomerang.dao.RetryItemDao;
 import com.vijaysy.boomerang.enums.FallBackReasons;
+import com.vijaysy.boomerang.enums.HttpMethod;
 import com.vijaysy.boomerang.exception.DBException;
 import com.vijaysy.boomerang.models.RetryItem;
 import com.vijaysy.boomerang.services.IngestionService;
@@ -12,7 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -25,21 +31,22 @@ public class ListenerThread implements Runnable {
     private final Jedis jedis;
     private final MangedCache mangedCache;
     private final RetryItemDao retryItemDao;
-    private final JerseyClient jerseyClient;
     private final IngestionService ingestionService;
+    private final HashMap<HttpMethod, RestClient> httpMethodRestClientHashMap;
+    private final ObjectMapper objectMapper;
 
 
-    public ListenerThread(MangedCache mangedCache, String channel, RetryItemDao retryItemDao, JerseyClient jerseyClient, IngestionService ingestionService) {
+    public ListenerThread(MangedCache mangedCache, String channel, RetryItemDao retryItemDao, IngestionService ingestionService, HashMap<HttpMethod, RestClient> httpMethodRestClientHashMap, ObjectMapper objectMapper) {
         this.mangedCache = mangedCache;
         this.channel = "__key*__:" + channel + ".*";
         this.retryItemDao = retryItemDao;
-        this.jerseyClient = jerseyClient;
         this.ingestionService = ingestionService;
         this.jedis = mangedCache.getJedisResource();
+        this.httpMethodRestClientHashMap = httpMethodRestClientHashMap;
+        this.objectMapper = objectMapper;
     }
 
     @Override
-    @Parallel(threads = 2)
     public void run() {
         jedis.psubscribe(new JedisPubSub() {
 
@@ -63,7 +70,7 @@ public class ListenerThread implements Runnable {
                             return;
                         }
                         jedis.expire(messageId, 20);
-                        Response response = jerseyClient.execute(retryItem);
+                        Response response = httpMethodRestClientHashMap.get(retryItem.getHttpMethod()).invoke(retryItem.getHttpUri(), retryItem.getMessage(), getHeaders(retryItem.getHeaders()), retryItem.getMessageId());
                         if (Response.Status.Family.SUCCESSFUL.equals(response.getStatus()))
                             process(retryItem, FallBackReasons.SUCCESSFULL, response);
                         else if (response.getStatus() == retryItem.getRetryStatusCode())
@@ -90,8 +97,26 @@ public class ListenerThread implements Runnable {
     private void process(RetryItem retryItem, FallBackReasons fallBackReasons, Response response) throws DBException {
         retryItem.setFallBackReasons(fallBackReasons);
         retryItem.setProcessed(true);
-        retryItem.setReturnFlag(Response.Status.Family.SUCCESSFUL.equals(jerseyClient.returnExecute(retryItem, response)));
+        boolean flag = fallBackReasons.equals(FallBackReasons.SUCCESSFULL);
+
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
+        headers.putSingle("retry", flag);
+        headers.putSingle("reason", retryItem.getFallBackReasons());
+        Object body = (retryItem.getNeedResponse() && flag) ? response : "";
+        Response returnResponse = httpMethodRestClientHashMap.get(HttpMethod.PUT).invoke(retryItem.getFallbackHttpUri() + "/" + retryItem.getMessageId() + "/fallback", body, headers, "executeFallBack");
+
+        retryItem.setReturnFlag(Response.Status.Family.SUCCESSFUL.equals(returnResponse));
         retryItemDao.update(retryItem);
+    }
+
+    private MultivaluedHashMap<String, Object> getHeaders(String headers) {
+        try {
+            return (headers != null && !headers.isEmpty()) ? objectMapper.readValue(headers, MultivaluedHashMap.class) : null;
+        } catch (IOException e) {
+            log.error("Exception while deserialization the headers");
+            return null;
+
+        }
     }
 
 }

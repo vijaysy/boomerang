@@ -1,4 +1,4 @@
-package com.vijaysy.boomerang.utils;
+package com.vijaysy.boomerang.helpers;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

@@ -8,6 +8,7 @@ import com.vijaysy.boomerang.dao.RetryItemDao;
 import com.vijaysy.boomerang.enums.HttpMethod;
 import com.vijaysy.boomerang.helpers.ListenerThread;
 import com.vijaysy.boomerang.services.IngestionService;
+import com.vijaysy.boomerang.services.RetryItemHandler;
 import io.dropwizard.lifecycle.Managed;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,29 +24,23 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class ManagedListener implements Managed {
 
     private final BoomerangConfiguration boomerangConfiguration;
-    private final RetryItemDao retryItemDao;
     private final MangedCache mangedCache;
-    private final IngestionService ingestionService;
     private final ThreadPoolExecutor threadPoolExecutor;
-    private final HashMap<HttpMethod,RestClient> httpMethodRestClientHashMap;
-    private final ObjectMapper objectMapper;
+    private final RetryItemHandler retryItemHandler;
 
     @Inject
-    public ManagedListener(BoomerangConfiguration boomerangConfiguration, ThreadPoolExecutor threadPoolExecutor, RetryItemDao retryItemDao, MangedCache mangedCache, IngestionService ingestionService,HashMap<HttpMethod,RestClient> httpMethodRestClientHashMap,ObjectMapper objectMapper){
+    public ManagedListener(BoomerangConfiguration boomerangConfiguration, ThreadPoolExecutor threadPoolExecutor, RetryItemDao retryItemDao, MangedCache mangedCache, IngestionService ingestionService, HashMap<HttpMethod, RestClient> httpMethodRestClientHashMap, ObjectMapper objectMapper, RetryItemHandler retryItemHandler){
         this.boomerangConfiguration=boomerangConfiguration;
         this.threadPoolExecutor=threadPoolExecutor;
-        this.retryItemDao=retryItemDao;
         this.mangedCache = mangedCache;
-        this.ingestionService=ingestionService;
-        this.objectMapper=objectMapper;
-        this.httpMethodRestClientHashMap=httpMethodRestClientHashMap;
+        this.retryItemHandler = retryItemHandler;
     }
     @Override
     public void start() throws Exception {
         boomerangConfiguration.getThreadConfigs().forEach(threadConfig -> {
             for (int i=0;i< threadConfig.getListenerCount();i++) {
-                log.info("Creating thread "+i+" of name "+threadConfig.getName());
-                threadPoolExecutor.execute(new ListenerThread(mangedCache, threadConfig.getChannel(), retryItemDao, ingestionService,httpMethodRestClientHashMap,objectMapper));
+                log.info("Creating thread %d of name %s",i,threadConfig.getName());
+                threadPoolExecutor.execute(new ListenerThread(mangedCache, threadConfig.getChannel(),retryItemHandler));
             }
         });
 

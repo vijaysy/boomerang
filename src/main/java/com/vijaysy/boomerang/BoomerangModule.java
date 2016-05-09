@@ -5,17 +5,19 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.vijaysy.boomerang.core.MangedCache;
-import com.vijaysy.boomerang.core.restclient.GetClient;
-import com.vijaysy.boomerang.core.restclient.PostClient;
-import com.vijaysy.boomerang.core.restclient.PutClient;
+import com.vijaysy.boomerang.core.restclient.impl.GetClient;
+import com.vijaysy.boomerang.core.restclient.impl.PostClient;
+import com.vijaysy.boomerang.core.restclient.impl.PutClient;
 import com.vijaysy.boomerang.core.restclient.RestClient;
 import com.vijaysy.boomerang.dao.RetryItemDao;
 import com.vijaysy.boomerang.dao.RetryItemDaoImpl;
 import com.vijaysy.boomerang.enums.HttpMethod;
 import com.vijaysy.boomerang.services.IngestionService;
 import com.vijaysy.boomerang.services.ListenerService;
+import com.vijaysy.boomerang.services.RetryItemHandler;
 import com.vijaysy.boomerang.services.impl.IngestionServiceImpl;
 import com.vijaysy.boomerang.services.impl.ListenerServiceImpl;
+import com.vijaysy.boomerang.services.impl.RetryItemHandlerImpl;
 import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.setup.Environment;
 import org.hibernate.SessionFactory;
@@ -44,6 +46,7 @@ public class BoomerangModule extends AbstractModule {
         bind(IngestionService.class).to(IngestionServiceImpl.class).in(Singleton.class);
         bind(ListenerService.class).to(ListenerServiceImpl.class).in(Singleton.class);
         bind(RetryItemDao.class).to(RetryItemDaoImpl.class).in(Singleton.class);
+        bind(RetryItemHandler.class).to(RetryItemHandlerImpl.class);
 
     }
 

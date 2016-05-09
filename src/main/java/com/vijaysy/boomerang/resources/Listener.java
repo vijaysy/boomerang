@@ -37,7 +37,7 @@ public class Listener {
     @Timed
     @Path("listen")
     public void doListen(ThreadConfig threadConfig)throws Exception{
-        log.info("Listener creation request: "+threadConfig);
+        log.info("Listener creation request: {}",threadConfig);
         listenerService.createListener(threadConfig);
     }
 

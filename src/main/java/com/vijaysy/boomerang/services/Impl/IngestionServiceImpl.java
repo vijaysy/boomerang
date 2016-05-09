@@ -38,7 +38,7 @@ public class IngestionServiceImpl implements IngestionService {
             retryItemDao.save(retryItem);
             return true;
         } catch (Exception e){
-            log.error("Exception while processing, messageID "+retryItem.getMessageId()+"\n"+e.toString());
+            log.error("Exception while processing, messageID {} \n {}",retryItem.getMessageId(),e);
             return false;
         }
 
@@ -54,7 +54,7 @@ public class IngestionServiceImpl implements IngestionService {
             retryItemDao.update(retryItem);
             return true;
         } catch (Exception e){
-            log.error("Exception while processing, messageID "+retryItem.getMessageId()+"\n"+e.toString());
+            log.error("Exception while processing, messageID {} \n {}",retryItem.getMessageId(),e);
             return false;
         }
     }

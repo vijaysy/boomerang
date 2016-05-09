@@ -37,7 +37,7 @@ public class Reappear {
     @Timed
     @Path("reappear")
     public boolean doReappear(RetryItem retryItem) throws Exception {
-        log.info("Retry Item received: " + retryItem);
+        log.info("Retry Item received: {}",retryItem);
         if (ingestionService.process(retryItem))
             return true;
         throw new ReappearException("Exception happened, please check the log with messageID:" + retryItem.getMessageId());

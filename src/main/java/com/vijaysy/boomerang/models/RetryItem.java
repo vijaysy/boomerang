@@ -32,7 +32,7 @@ public class RetryItem implements Serializable{
 
     public RetryItem(){}
 
-    public RetryItem(String messageId, String message , HttpMethod httpMethod, String httpUri, int nextRetry, int[] retryPattern,String fHttpUri, String channel,String headers,Boolean needResponse,int retryStatusCode){
+    public RetryItem(String messageId, String message , HttpMethod httpMethod, String httpUri, int nextRetry, int[] retryPattern,String fHttpUri, String channel,String headers,Boolean needResponse){
         this.messageId=messageId;
         this.message=message;
         this.httpMethod=httpMethod;
@@ -44,7 +44,6 @@ public class RetryItem implements Serializable{
         this.channel=channel;
         this.headers=headers;
         this.needResponse=needResponse;
-        this.retryStatusCode=retryStatusCode;
 
     }
 
@@ -62,6 +61,10 @@ public class RetryItem implements Serializable{
     @JsonProperty
     @Column(name = "message")
     private String message;
+
+    @JsonProperty
+    @Column(name = "response")
+    private String response;
 
     @JsonProperty
     @Enumerated(EnumType.STRING)
@@ -94,10 +97,6 @@ public class RetryItem implements Serializable{
     @Column(name = "fallback_http_uri")
     private String fallbackHttpUri;
 
-    @JsonProperty
-    @NotNull
-    @Column(name = "retry_status_code")
-    private int retryStatusCode;
 
     @JsonProperty
     @Column(name = "headers")
@@ -172,10 +171,6 @@ public class RetryItem implements Serializable{
         return channel;
     }
 
-    public int getRetryStatusCode() {
-        return retryStatusCode;
-    }
-
     public String getHeaders() {
         return headers;
     }
@@ -200,6 +195,10 @@ public class RetryItem implements Serializable{
         return returnFlag;
     }
 
+    public String getResponse() {
+        return response;
+    }
+
     public FallBackReasons getFallBackReasons() {
         return fallBackReasons;
     }
@@ -214,6 +213,10 @@ public class RetryItem implements Serializable{
 
     public void setReturnFlag(boolean returnFlag) {
         this.returnFlag = returnFlag;
+    }
+
+    public void setResponse(String response) {
+        this.response = response;
     }
 
     public void setFallBackReasons(FallBackReasons fallBackReasons) {
@@ -250,7 +253,6 @@ public class RetryItem implements Serializable{
         private int [] retryPattern;
         private String channel;
         private String fallbackHttpUri;
-        private int retryStatusCode=0;
         private String headers;
         private Boolean needResponse;
         private MultivaluedHashMap<String, String> multivaluedHashMap = new MultivaluedHashMap<String, String>();
@@ -301,10 +303,6 @@ public class RetryItem implements Serializable{
             return this;
         }
 
-        public RetryItemBuilder withRetryStatusCode(int retryStatusCode){
-            this.retryStatusCode=retryStatusCode;
-            return this;
-        }
 
         public RetryItemBuilder withNeedResponse(Boolean needResponse) {
             this.needResponse = needResponse;
@@ -331,10 +329,8 @@ public class RetryItem implements Serializable{
                 throw new InvalidRetryItemException("Channel is null");
             if(isValidURI(fallbackHttpUri))
                 throw new InvalidRetryItemException("FallbackHttpUri is null");
-            if(retryStatusCode==0)
-                throw new InvalidRetryItemException("RetryStatusCode is zero");
 
-            return new RetryItem(messageId, message, httpMethod, httpUri, nextRetry, retryPattern, fallbackHttpUri, channel, headers, needResponse,retryStatusCode);
+            return new RetryItem(messageId, message, httpMethod, httpUri, nextRetry, retryPattern, fallbackHttpUri, channel, headers, needResponse);
         }
 
         static boolean isValidURI(String uriStr) {

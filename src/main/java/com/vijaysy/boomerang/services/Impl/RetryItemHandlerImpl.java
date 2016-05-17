@@ -50,7 +50,7 @@ public class RetryItemHandlerImpl implements RetryItemHandler {
             Response response = httpMethodRestClientHashMap.get(retryItem.getHttpMethod()).invoke(retryItem.getHttpUri(), retryItem.getMessage(), getHeaders(retryItem.getHeaders()), retryItem.getMessageId());
             if (Response.Status.Family.SUCCESSFUL == response.getStatusInfo().getFamily())
                 process(retryItem, FallBackReasons.SUCCESSFULL, response);
-            else if (response.getStatus() == retryItem.getRetryStatusCode())
+            else if (response.getStatusInfo().getFamily() == Response.Status.Family.SERVER_ERROR)
                 ingestionService.againProcess(retryItem);
             else
                 process(retryItem, FallBackReasons.NOT_RETRY_STATUS_CODE, response);
@@ -62,6 +62,7 @@ public class RetryItemHandlerImpl implements RetryItemHandler {
     private void process(RetryItem retryItem, FallBackReasons fallBackReasons, Response response) throws DBException {
         retryItem.setFallBackReasons(fallBackReasons);
         retryItem.setProcessed(true);
+        retryItem.setResponse(response.getEntity().toString());
         boolean flag = fallBackReasons.equals(FallBackReasons.SUCCESSFULL);
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         headers.putSingle("retry", flag);
